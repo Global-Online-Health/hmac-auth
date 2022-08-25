@@ -9,7 +9,7 @@ public class HttpUtilsTest {
     public void urlEncodeWhenNullUrlReturnsEmptyString() {
         var expected = "";
 
-        var result = HttpUtils.urlEncode(null);
+        var result = HttpUtils.urlEncode(null, true);
 
         assertEquals(expected, result);
     }
@@ -18,7 +18,7 @@ public class HttpUtilsTest {
     public void urlEncodeWhenEmptyUrlReturnsEmptyString() {
         var expected = "";
 
-        var result = HttpUtils.urlEncode("");
+        var result = HttpUtils.urlEncode("", true);
 
         assertEquals(expected, result);
     }
@@ -30,7 +30,7 @@ public class HttpUtilsTest {
                 + "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                 + "-_.~";
 
-        var result = HttpUtils.urlEncode(unreservedCharacters);
+        var result = HttpUtils.urlEncode(unreservedCharacters, true);
 
         assertEquals(unreservedCharacters, result);
     }
@@ -40,7 +40,7 @@ public class HttpUtilsTest {
         var expected = "%09%0A%0D%20%21%22%23%24%25%26%27%28%29%2A%2B%2C%3A%3B%3C%3D%3E%3F%40%5B%5C%5D%5E%60%7B%7C%7D";
         var reservedChars = "\t\n\r !\"#$%&'()*+,:;<=>?@[\\]^`{|}";
 
-        var result = HttpUtils.urlEncode(reservedChars);
+        var result = HttpUtils.urlEncode(reservedChars, true);
 
         assertEquals(expected, result);
     }

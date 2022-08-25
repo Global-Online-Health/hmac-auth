@@ -26,7 +26,7 @@ public class HttpUtils {
         ENCODED_CHARS_PATTERN = Pattern.compile(pattern);
     }
 
-    public static String urlEncode(final String value) {
+    public static String urlEncode(final String value, final boolean path) {
         if (value == null) {
             return "";
         }
@@ -46,7 +46,7 @@ public class HttpUtils {
                     replacement = "%2A";
                 } else if ("%7E".equals(replacement)) {
                     replacement = "~";
-                } else if ("%2F".equals(replacement)) {
+                } else if (path && "%2F".equals(replacement)) {
                     replacement = "/";
                 }
 
