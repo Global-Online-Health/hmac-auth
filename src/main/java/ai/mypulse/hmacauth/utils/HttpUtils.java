@@ -1,7 +1,14 @@
 package ai.mypulse.hmacauth.utils;
 
+import ai.mypulse.hmacauth.core.SignRequest;
+import ai.mypulse.hmacauth.http.HttpMethod;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -78,5 +85,12 @@ public class HttpUtils {
         }
 
         return resultUri;
+    }
+
+    public static boolean usePayloadForQueryParameters(SignRequest request) {
+        boolean requestIsPOST = HttpMethod.POST.equals(request.getHttpMethod());
+        boolean requestHasNoPayload = (request.getContent() == null);
+
+        return requestIsPOST && requestHasNoPayload;
     }
 }
