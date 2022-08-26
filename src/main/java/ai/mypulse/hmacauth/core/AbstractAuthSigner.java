@@ -7,6 +7,7 @@ import org.apache.commons.codec.binary.Hex;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -52,8 +53,12 @@ public abstract class AbstractAuthSigner {
         return result.toString();
     }
 
-    protected String getContentHash(InputStream inputStream) throws IOException {
-        return hex(hash(inputStream));
+    protected String getContentStreamHash(InputStream stream) throws IOException {
+        return hex(hash(stream));
+    }
+
+    protected String getContentStringHash(String content) throws IOException {
+        return hex(hashString(content));
     }
 
     private SortedMap<String, List<String>> getSortedParameters(Map<String, List<String>> parameters) {
@@ -87,6 +92,15 @@ public abstract class AbstractAuthSigner {
             }
 
             return digest.digest();
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 hashing algorithm unknown.", e);
+        }
+    }
+
+    public static byte[] hashString(String text) {
+        try {
+            final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            return digest.digest(text.getBytes(StandardCharsets.UTF_8));
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("SHA-256 hashing algorithm unknown.", e);
         }
