@@ -47,32 +47,29 @@ public class HttpUtilsTest {
 
     @Test
     public void appendUriWhenUriHasTrailingSlashAndNoPathGivenDoesNothing() {
-       var host = "example.com/";
        var path = "";
 
-        var result = HttpUtils.appendUri(host, path);
+        var result = HttpUtils.appendUri(path);
 
-        assertEquals(host, result);
+        assertEquals("/", result);
     }
 
     @Test
     public void appendUriWhenUriHasNoTrailingSlashAndNoPathGivenAddsTrailingSlash() {
-        var host = "example.com";
         var path = "";
-        var expected = "example.com/";
+        var expected = "/";
 
-        var result = HttpUtils.appendUri(host, path);
+        var result = HttpUtils.appendUri(path);
 
         assertEquals(expected, result);
     }
 
     @Test
     public void appendUriAddsPath() {
-        var host = "example.com";
         var path = "foo/bar";
-        var expected = "example.com/foo/bar";
+        var expected = "/foo/bar";
 
-        var result = HttpUtils.appendUri(host, path);
+        var result = HttpUtils.appendUri(path);
 
         assertEquals(expected, result);
     }

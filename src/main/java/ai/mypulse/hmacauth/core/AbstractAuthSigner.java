@@ -1,17 +1,18 @@
 package ai.mypulse.hmacauth.core;
 
 import ai.mypulse.hmacauth.utils.HttpUtils;
-
-import java.io.ByteArrayInputStream;
+import ai.mypulse.hmacauth.utils.QueryParamsUtils;
+import ai.mypulse.hmacauth.utils.StringUtils;
+import org.apache.commons.codec.binary.Hex;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 public abstract class AbstractAuthSigner {
+    private static final int BUFFER_SIZE = 1024 * 1024;
     protected String getResourcePathToCanonical(String resourcePath) {
         String value;
 
@@ -29,10 +30,11 @@ public abstract class AbstractAuthSigner {
         return value;
     }
 
-    protected String getQueryParametersToCanonical(Map<String, List<String>> parameters) {
-        if (parameters == null) {
+    protected String getQueryParametersToCanonical(String query) {
+        if (StringUtils.isNullOrEmpty(query)) {
             return "";
         }
+        var parameters = QueryParamsUtils.convertQueryStringToMap(query);
         final SortedMap<String, List<String>> sorted = getSortedParameters(parameters);
 
         final StringBuilder result = new StringBuilder();
@@ -48,6 +50,10 @@ public abstract class AbstractAuthSigner {
         }
 
         return result.toString();
+    }
+
+    protected String getContentHash(InputStream inputStream) throws IOException {
+        return hex(hash(inputStream));
     }
 
     private SortedMap<String, List<String>> getSortedParameters(Map<String, List<String>> parameters) {
@@ -68,43 +74,26 @@ public abstract class AbstractAuthSigner {
         return sorted;
     }
 
-    private static MessageDigest getMessageDigestInstance() throws NoSuchAlgorithmException {
-        MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-        messageDigest.reset();
-        return messageDigest;
-    }
+    private static byte[] hash(final InputStream inputStream) throws IOException, IllegalArgumentException {
+        Objects.requireNonNull(inputStream);
 
-
-    private InputStream getBinaryRequestPayloadStream(SignRequest request) {
-        InputStream is = request.getContentUnwrapped();
-        if (is == null)
-            return new ByteArrayInputStream(new byte[0]);
-        return is;
-    }
-
-    private byte[] hash(String text) throws Exception {
         try {
-            MessageDigest md = getMessageDigestInstance();
-            md.update(text.getBytes(StandardCharsets.UTF_8));
-            return md.digest();
-        } catch (Exception e) {
-            throw new Exception(
-                    "Unable to compute hash while signing request: "
-                            + e.getMessage(), e);
-        }
-    }
+            final byte[] buffer = new byte[BUFFER_SIZE];
+            final MessageDigest digest = MessageDigest.getInstance("SHA-256");
 
-    protected byte[] hash(InputStream input) {
-        MessageDigest digest = null;
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-            new DigestInputStream(input, digest);
-            byte[] hash = digest.digest();
-            return hash;
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                digest.update(buffer, 0, bytesRead);
+            }
+
+            return digest.digest();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return new byte[0];
+            throw new IllegalStateException("SHA-256 hashing algorithm unknown.", e);
         }
     }
 
+    private static String hex(byte[] bytes) {
+        char[] result = Hex.encodeHex(bytes);
+        return new String(result);
+    }
 }
