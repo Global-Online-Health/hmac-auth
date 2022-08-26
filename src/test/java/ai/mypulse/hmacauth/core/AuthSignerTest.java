@@ -143,14 +143,17 @@ public class AuthSignerTest {
         var auth = new AuthSigner();
         var signatureTimestamp = Instant.now(Clock.fixed(Instant.parse("2022-01-01T14:00:00Z"),
                 ZoneOffset.UTC)).getEpochSecond();
+        var accessKey = "test-access-key";
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setServerName("example");
         request.setRequestURI("example.ai");
         request.setMethod("GET");
         request.setPathInfo("/foo");
-        request.addHeader("x-signature-timestamp", signatureTimestamp);
+        request.addHeader("x-mp-timestamp", signatureTimestamp);
+        request.addHeader("X-mp-access-key", accessKey);
         var expectedResult = AuthSigner.HMAC_ALGORITHM +
                 "\n" + signatureTimestamp +
+                "\n" + accessKey +
                 "\ne1688f15ba88ed1fdf3279a044ad4d99a301fd14257f0b4dd2b986de4f2edfc8";
 
         var result = auth.createStringToSign(request);
@@ -163,14 +166,17 @@ public class AuthSignerTest {
         var auth = new AuthSigner();
         var signatureTimestamp = Instant.now(Clock.fixed(Instant.parse("2022-01-01T14:00:00Z"),
                 ZoneOffset.UTC)).getEpochSecond();
+        var accessKey = "test-access-key";
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setServerName("example");
         request.setRequestURI("example.ai");
         request.setMethod("GET");
         request.setPathInfo("/foo");
-        request.addHeader("X-SIGNATURE-TIMESTAMP", signatureTimestamp);
+        request.addHeader("X-MP-TIMESTAMP", signatureTimestamp);
+        request.addHeader("X-MP-ACCESS-KEY", accessKey);
         var expectedResult = AuthSigner.HMAC_ALGORITHM +
                 "\n" + signatureTimestamp +
+                "\n" + accessKey +
                 "\ne1688f15ba88ed1fdf3279a044ad4d99a301fd14257f0b4dd2b986de4f2edfc8";
 
         var result = auth.createStringToSign(request);
@@ -183,14 +189,16 @@ public class AuthSignerTest {
         var auth = new AuthSigner();
         var signatureTimestamp = Instant.now(Clock.fixed(Instant.parse("2022-01-01T14:00:00Z"),
                 ZoneOffset.UTC)).getEpochSecond();
+        var accessKey = "test-access-key";
         var signatureRequest = new AuthSignerRequest();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setServerName("example");
         request.setRequestURI("example.ai");
         request.setMethod("GET");
         request.setPathInfo("/foo");
-        request.addHeader("X-SIGNATURE-TIMESTAMP", signatureTimestamp);
-        var expectedResult = "a041c63779ef39c6c95608e983038429e3afece6dcb3f268872d21806cd67743";
+        request.addHeader("X-MP-TIMESTAMP", signatureTimestamp);
+        request.addHeader("X-MP-ACCESS-KEY", accessKey);
+        var expectedResult = "947bd0fa6994f6ddf7ccbddeff6968a8f011187b88864f1f8ba4f3fb48a2d9f0";
         signatureRequest.setHttpRequest(request);
         signatureRequest.setSecretAccessKey("test-secret-access-key");
 

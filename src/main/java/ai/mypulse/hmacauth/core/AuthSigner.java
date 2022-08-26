@@ -19,7 +19,9 @@ public class AuthSigner extends AbstractAuthSigner {
         String hashCanonicalRequest = hashCanonicalRequest(request);
         return HMAC_ALGORITHM +
                 SEPARATOR +
-                request.getHeader("x-signature-timestamp") +
+                request.getHeader("x-mp-timestamp") +
+                SEPARATOR +
+                request.getHeader("x-mp-access-key") +
                 SEPARATOR +
                 hashCanonicalRequest;
     }
