@@ -3,7 +3,7 @@ package ai.mypulse.hmacauth.core;
 import javax.servlet.http.HttpServletRequest;
 
 public interface Signer {
-    public String getSecretAccessKey();
+    String getSecretAccessKey();
 
-    public HttpServletRequest getHttpRequest();
+    HttpServletRequest getHttpRequest();
 }

@@ -32,9 +32,8 @@ public class QueryParamsUtils {
 
             List<String> parsedValue = parseParameterValue(value);
             if (parsedValue.size() > 1) {
-                parsedValue.forEach((val) -> {
-                    query_pairs.get(key).add(val.replaceAll("\"", "").trim());
-                });
+                parsedValue.forEach((val) ->
+                        query_pairs.get(key).add(val.replaceAll("\"", "").trim()));
             } else {
                 query_pairs.get(key).add(parsedValue.get(0));
             }
@@ -45,6 +44,6 @@ public class QueryParamsUtils {
             String listValues = value.replaceAll("[\\[\\]]", "");
             return new ArrayList<>(Arrays.asList(listValues.split(",")));
         }
-        return new ArrayList<>(Arrays.asList(""));
+        return new ArrayList<>(List.of(""));
     }
 }

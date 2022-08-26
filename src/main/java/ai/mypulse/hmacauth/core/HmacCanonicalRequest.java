@@ -3,22 +3,42 @@ package ai.mypulse.hmacauth.core;
 import ai.mypulse.hmacauth.utils.HttpUtils;
 import ai.mypulse.hmacauth.utils.QueryParamsUtils;
 import ai.mypulse.hmacauth.utils.StringUtils;
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.codec.digest.HmacAlgorithms;
-import org.apache.commons.codec.digest.HmacUtils;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
-public abstract class AbstractAuthSigner {
-    private static final int BUFFER_SIZE = 1024 * 1024;
+import static ai.mypulse.hmacauth.utils.Constants.SEPARATOR;
+import static ai.mypulse.hmacauth.utils.EncodingUtils.*;
+
+public class HmacCanonicalRequest implements CanonicalRequest {
+
+    public String hashCanonicalRequest(HttpServletRequest request) throws IOException {
+        String canonicalRequest = createCanonicalRequest(request);
+        return getContentStringHash(canonicalRequest);
+    }
+
+    private String getContentStringHash(String content) {
+        return hex(hashString(content));
+    }
+
+    protected String createCanonicalRequest(HttpServletRequest request) throws IOException {
+        final String path = HttpUtils.appendUri(request.getPathInfo());
+
+        // ensure that the inputStream is retrieved before getting the query parameters
+        var inputStream = request.getInputStream();
+
+        return request.getMethod() +
+                SEPARATOR +
+                getResourcePathToCanonical(path) +
+                SEPARATOR +
+                getQueryParametersToCanonical(request.getQueryString()) +
+                SEPARATOR +
+                getContentStreamHash(inputStream);
+    }
+
     protected String getResourcePathToCanonical(String resourcePath) {
         String value;
 
@@ -34,6 +54,10 @@ public abstract class AbstractAuthSigner {
             value = "/" + value;
         }
         return value;
+    }
+
+    protected String getContentStreamHash(InputStream stream) throws IOException {
+        return hex(hash(stream));
     }
 
     protected String getQueryParametersToCanonical(String query) {
@@ -58,21 +82,6 @@ public abstract class AbstractAuthSigner {
         return result.toString();
     }
 
-    protected String calculateHmac(String secretAccessKey, String stringToSign) throws NoSuchAlgorithmException {
-        final HmacUtils hmacHelper = new HmacUtils(HmacAlgorithms.HMAC_SHA_256, secretAccessKey);
-
-        final byte[] raw = hmacHelper.hmac(stringToSign);
-        return hex(raw);
-    }
-
-    protected String getContentStreamHash(InputStream stream) throws IOException {
-        return hex(hash(stream));
-    }
-
-    protected String getContentStringHash(String content) throws IOException {
-        return hex(hashString(content));
-    }
-
     private SortedMap<String, List<String>> getSortedParameters(Map<String, List<String>> parameters) {
         final SortedMap<String, List<String>> sorted = new TreeMap<>();
 
@@ -89,37 +98,5 @@ public abstract class AbstractAuthSigner {
 
         });
         return sorted;
-    }
-
-    private static byte[] hash(final InputStream inputStream) throws IOException, IllegalArgumentException {
-        Objects.requireNonNull(inputStream);
-
-        try {
-            final byte[] buffer = new byte[BUFFER_SIZE];
-            final MessageDigest digest = MessageDigest.getInstance("SHA-256");
-
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                digest.update(buffer, 0, bytesRead);
-            }
-
-            return digest.digest();
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("SHA-256 hashing algorithm unknown.", e);
-        }
-    }
-
-    public static byte[] hashString(String text) {
-        try {
-            final MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            return digest.digest(text.getBytes(StandardCharsets.UTF_8));
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("SHA-256 hashing algorithm unknown.", e);
-        }
-    }
-
-    private static String hex(byte[] bytes) {
-        char[] result = Hex.encodeHex(bytes);
-        return new String(result);
     }
 }

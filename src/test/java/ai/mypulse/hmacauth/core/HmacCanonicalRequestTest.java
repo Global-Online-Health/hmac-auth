@@ -3,24 +3,18 @@ package ai.mypulse.hmacauth.core;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneOffset;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 
-public class AuthSignerTest {
-
+public class HmacCanonicalRequestTest {
     private static final String hashFromNoContent = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
 
     @Test
     public void createCanonicalRequestReturnsCanonicalRequest() throws IOException {
-        var auth = new AuthSigner();
+        var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "GET\n/foo\n\n" + hashFromNoContent;
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setServerName("example");
@@ -28,14 +22,14 @@ public class AuthSignerTest {
         request.setMethod("GET");
         request.setPathInfo("/foo");
 
-        var result = auth.createCanonicalRequest(request);
+        var result = canonicalRequest.createCanonicalRequest(request);
 
         assertEquals(expectedResult, result);
     }
 
     @Test
     public void createCanonicalRequestWithQueryParamsReturnsCanonicalRequest() throws IOException {
-        var auth = new AuthSigner();
+        var canonicalRequest = new HmacCanonicalRequest();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setServerName("example");
         request.setRequestURI("example.ai");
@@ -44,14 +38,14 @@ public class AuthSignerTest {
         request.setQueryString("paramC=valueC&paramB=valueB&paramA=valueA");
         var expectedResult = "GET\n/foo\nparamA=valueA&paramB=valueB&paramC=valueC\n" + hashFromNoContent;
 
-        var result = auth.createCanonicalRequest(request);
+        var result = canonicalRequest.createCanonicalRequest(request);
 
         assertEquals(expectedResult, result);
     }
 
     @Test
     public void createCanonicalRequestWithMultipleQueryParamsValuesReturnsCanonicalRequest() throws IOException {
-        var auth = new AuthSigner();
+        var canonicalRequest = new HmacCanonicalRequest();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setServerName("example");
         request.setRequestURI("example.ai");
@@ -60,14 +54,14 @@ public class AuthSignerTest {
         request.setQueryString("paramB=valueB&paramA=[\"valueAB\", \"valueAA\"]");
         var expectedResult = "GET\n/foo\nparamA=valueAA&paramA=valueAB&paramB=valueB\n" + hashFromNoContent;
 
-        var result = auth.createCanonicalRequest(request);
+        var result = canonicalRequest.createCanonicalRequest(request);
 
         assertEquals(expectedResult, result);
     }
 
     @Test
     public void createCanonicalRequestWithRequestBodyReturnsCanonicalRequest() throws IOException {
-        var auth = new AuthSigner();
+        var canonicalRequest = new HmacCanonicalRequest();
         var values = new HashMap<String, String>() {{
             put("fieldA", "valueA");
             put("fieldB", "valueB");
@@ -81,14 +75,14 @@ public class AuthSignerTest {
         request.setContent(requestBody);
         var expectedResult = "POST\n/foo\n\nf4bdef762a687446d6e44db2c986ce8ab52ee26eafcd86ea70035754b9b60d19";
 
-        var result = auth.createCanonicalRequest(request);
+        var result = canonicalRequest.createCanonicalRequest(request);
 
         assertEquals(expectedResult, result);
     }
 
     @Test
     public void hashCanonicalRequestReturnsHashedContent() throws IOException {
-        var auth = new AuthSigner();
+        var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "e1688f15ba88ed1fdf3279a044ad4d99a301fd14257f0b4dd2b986de4f2edfc8";
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setServerName("example");
@@ -96,14 +90,14 @@ public class AuthSignerTest {
         request.setMethod("GET");
         request.setPathInfo("/foo");
 
-        var result = auth.hashCanonicalRequest(request);
+        var result = canonicalRequest.hashCanonicalRequest(request);
 
         assertEquals(expectedResult, result);
     }
 
     @Test
     public void hashCanonicalRequestWithQueryParametersReturnsHashedContent() throws IOException {
-        var auth = new AuthSigner();
+        var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "dae7e91d46b1a622ae941b98b736f8a312c03099ec39a5f59e53d55f1f302194";
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setServerName("example");
@@ -112,14 +106,14 @@ public class AuthSignerTest {
         request.setPathInfo("/foo");
         request.setQueryString("paramC=valueC&paramB=valueB&paramA=valueA");
 
-        var result = auth.hashCanonicalRequest(request);
+        var result = canonicalRequest.hashCanonicalRequest(request);
 
         assertEquals(expectedResult, result);
     }
 
     @Test
     public void hashCanonicalRequestWithPayloadReturnsHashedContent() throws IOException {
-        var auth = new AuthSigner();
+        var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "31867acd1a6abe32891473dcc0069c92da04d7af4db8479d9426cd52629dfa0a";
         var values = new HashMap<String, String>() {{
             put("fieldA", "valueA");
@@ -133,185 +127,116 @@ public class AuthSignerTest {
         request.setPathInfo("/foo");
         request.setContent(requestBody);
 
-        var result = auth.hashCanonicalRequest(request);
-
-        assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void createStringToSignReturnsExpectedString() throws IOException {
-        var auth = new AuthSigner();
-        var signatureTimestamp = Instant.now(Clock.fixed(Instant.parse("2022-01-01T14:00:00Z"),
-                ZoneOffset.UTC)).getEpochSecond();
-        var accessKey = "test-access-key";
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setServerName("example");
-        request.setRequestURI("example.ai");
-        request.setMethod("GET");
-        request.setPathInfo("/foo");
-        request.addHeader("x-mp-timestamp", signatureTimestamp);
-        request.addHeader("X-mp-access-key", accessKey);
-        var expectedResult = AuthSigner.HMAC_ALGORITHM +
-                "\n" + signatureTimestamp +
-                "\n" + accessKey +
-                "\ne1688f15ba88ed1fdf3279a044ad4d99a301fd14257f0b4dd2b986de4f2edfc8";
-
-        var result = auth.createStringToSign(request);
-
-        assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void createStringToSignHandlesUppercaseSignatureTimestampHeader() throws IOException {
-        var auth = new AuthSigner();
-        var signatureTimestamp = Instant.now(Clock.fixed(Instant.parse("2022-01-01T14:00:00Z"),
-                ZoneOffset.UTC)).getEpochSecond();
-        var accessKey = "test-access-key";
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setServerName("example");
-        request.setRequestURI("example.ai");
-        request.setMethod("GET");
-        request.setPathInfo("/foo");
-        request.addHeader("X-MP-TIMESTAMP", signatureTimestamp);
-        request.addHeader("X-MP-ACCESS-KEY", accessKey);
-        var expectedResult = AuthSigner.HMAC_ALGORITHM +
-                "\n" + signatureTimestamp +
-                "\n" + accessKey +
-                "\ne1688f15ba88ed1fdf3279a044ad4d99a301fd14257f0b4dd2b986de4f2edfc8";
-
-        var result = auth.createStringToSign(request);
-
-        assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void calculateSignatureIsSuccessful() throws IOException, NoSuchAlgorithmException {
-        var auth = new AuthSigner();
-        var signatureTimestamp = Instant.now(Clock.fixed(Instant.parse("2022-01-01T14:00:00Z"),
-                ZoneOffset.UTC)).getEpochSecond();
-        var accessKey = "test-access-key";
-        var signatureRequest = new AuthSignerRequest();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setServerName("example");
-        request.setRequestURI("example.ai");
-        request.setMethod("GET");
-        request.setPathInfo("/foo");
-        request.addHeader("X-MP-TIMESTAMP", signatureTimestamp);
-        request.addHeader("X-MP-ACCESS-KEY", accessKey);
-        var expectedResult = "947bd0fa6994f6ddf7ccbddeff6968a8f011187b88864f1f8ba4f3fb48a2d9f0";
-        signatureRequest.setHttpRequest(request);
-        signatureRequest.setSecretAccessKey("test-secret-access-key");
-
-        var result = auth.calculateSignature(signatureRequest);
+        var result = canonicalRequest.hashCanonicalRequest(request);
 
         assertEquals(expectedResult, result);
     }
 
     @Test
     public void canonicalRequestPrependsSlashWhenNoPathGiven() {
-        var auth = new AuthSigner();
+        var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "/";
         var requestPath = "";
 
-        var result = auth.getResourcePathToCanonical(requestPath);
+        var result = canonicalRequest.getResourcePathToCanonical(requestPath);
 
         assertEquals(expectedResult, result);
     }
 
     @Test
     public void canonicalRequestPrependsSlashWhenPathWithoutSlash() {
-        var auth = new AuthSigner();
+        var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "/foo";
         var requestPath = "foo";
 
-        var result = auth.getResourcePathToCanonical(requestPath);
+        var result = canonicalRequest.getResourcePathToCanonical(requestPath);
 
         assertEquals(expectedResult, result);
     }
 
     @Test
     public void canonicalRequestLeavesUnchangedWhenPathWithSlash() {
-        var auth = new AuthSigner();
+        var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "/foo";
         var requestPath = "/foo";
 
-        var result = auth.getResourcePathToCanonical(requestPath);
+        var result = canonicalRequest.getResourcePathToCanonical(requestPath);
 
         assertEquals(expectedResult, result);
     }
 
     @Test
     public void canonicalRequestLeavesUnchangedWhenPathWithTrailingSlash() {
-        var auth = new AuthSigner();
+        var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "/foo/bar/";
         var requestPath = "/foo/bar/";
 
-        var result = auth.getResourcePathToCanonical(requestPath);
+        var result = canonicalRequest.getResourcePathToCanonical(requestPath);
 
         assertEquals(expectedResult, result);
     }
 
     @Test
     public void canonicalQueryStringWhenNoParametersDoesNothing() {
-        var auth = new AuthSigner();
+        var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "";
 
-        var result = auth.getQueryParametersToCanonical(null);
+        var result = canonicalRequest.getQueryParametersToCanonical(null);
 
         assertEquals(expectedResult, result);
     }
 
     @Test
     public void canonicalQueryStringWhenUnorderedSortsSuccessfully() {
-        var auth = new AuthSigner();
+        var canonicalRequest = new HmacCanonicalRequest();
         var queryString = "paramB=valueB&param1=value1&paramA=valueA";
         var expectedResult = "param1=value1&paramA=valueA&paramB=valueB";
 
 
-        var result = auth.getQueryParametersToCanonical(queryString);
+        var result = canonicalRequest.getQueryParametersToCanonical(queryString);
 
         assertEquals(expectedResult, result);
     }
 
     @Test
     public void canonicalQueryStringWhenMultipleValuesAddsThemToParameter() {
-        var auth = new AuthSigner();
+        var canonicalRequest = new HmacCanonicalRequest();
         var queryString = "paramA=[\"valueAA\", \"valueAB\"]";
         var expectedResult = "paramA=valueAA&paramA=valueAB";
 
-        var result = auth.getQueryParametersToCanonical(queryString);
+        var result = canonicalRequest.getQueryParametersToCanonical(queryString);
 
         assertEquals(expectedResult, result);
     }
 
     @Test
     public void canonicalQueryStringWhenReservedCharactersEncodesSuccessfully() {
-        var auth = new AuthSigner();
+        var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "paramA=value%24&paramA=value%40";
         var queryString = "paramA=[\"value$\", \"value@\"]";
 
-        var result = auth.getQueryParametersToCanonical(queryString);
+        var result = canonicalRequest.getQueryParametersToCanonical(queryString);
 
         assertEquals(expectedResult, result);
     }
 
     @Test
     public void getContentHashWhenEmptyStreamReturnsDefault() throws IOException {
-        var auth = new AuthSigner();
+        var canonicalRequest = new HmacCanonicalRequest();
         var inputStream = new ByteArrayInputStream("".getBytes());
 
-        var result = auth.getContentStreamHash(inputStream);
+        var result = canonicalRequest.getContentStreamHash(inputStream);
 
         assertEquals(hashFromNoContent, result);
     }
 
     @Test
     public void getContentHashWhenStreamGivenReturnsEncodedStream() throws IOException {
-        var auth = new AuthSigner();
+        var canonicalRequest = new HmacCanonicalRequest();
         var inputStream = new ByteArrayInputStream("{\"fieldA\": \"valueA\", \"fieldB\": \"valueB\"}".getBytes());
         var expected = "bdc504f94212e01e375ee51333dfe51ac43a536c8c2f966b9eff0e34474f784a";
 
-        var result = auth.getContentStreamHash(inputStream);
+        var result = canonicalRequest.getContentStreamHash(inputStream);
 
         assertEquals(expected, result);
     }

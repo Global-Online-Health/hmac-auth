@@ -5,8 +5,9 @@ import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static ai.mypulse.hmacauth.utils.Constants.DEFAULT_ENCODING;
+
 public class HttpUtils {
-    private static final String DEFAULT_ENCODING = "UTF-8";
 
     private static final Pattern ENCODED_CHARS_PATTERN;
 
