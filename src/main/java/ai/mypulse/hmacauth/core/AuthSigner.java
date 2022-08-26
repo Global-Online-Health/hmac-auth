@@ -4,10 +4,16 @@ import ai.mypulse.hmacauth.utils.HttpUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 public class AuthSigner extends AbstractAuthSigner {
     public static final String SEPARATOR = "\n";
     public static final String HMAC_ALGORITHM = "HMAC-SHA256";
+
+    protected String calculateSignature(Signer request) throws IOException, NoSuchAlgorithmException {
+        String stringToSign = createStringToSign(request.getHttpRequest());
+        return calculateHmac(request.getSecretAccessKey(), stringToSign);
+    }
 
     protected String createStringToSign(HttpServletRequest request) throws IOException {
         String hashCanonicalRequest = hashCanonicalRequest(request);

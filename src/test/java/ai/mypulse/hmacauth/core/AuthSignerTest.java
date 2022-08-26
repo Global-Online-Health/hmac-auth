@@ -6,6 +6,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
@@ -173,6 +174,27 @@ public class AuthSignerTest {
                 "\ne1688f15ba88ed1fdf3279a044ad4d99a301fd14257f0b4dd2b986de4f2edfc8";
 
         var result = auth.createStringToSign(request);
+
+        assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void calculateSignatureIsSuccessful() throws IOException, NoSuchAlgorithmException {
+        var auth = new AuthSigner();
+        var signatureTimestamp = Instant.now(Clock.fixed(Instant.parse("2022-01-01T14:00:00Z"),
+                ZoneOffset.UTC)).getEpochSecond();
+        var signatureRequest = new AuthSignerRequest();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setServerName("example");
+        request.setRequestURI("example.ai");
+        request.setMethod("GET");
+        request.setPathInfo("/foo");
+        request.addHeader("X-SIGNATURE-TIMESTAMP", signatureTimestamp);
+        var expectedResult = "a041c63779ef39c6c95608e983038429e3afece6dcb3f268872d21806cd67743";
+        signatureRequest.setHttpRequest(request);
+        signatureRequest.setSecretAccessKey("test-secret-access-key");
+
+        var result = auth.calculateSignature(signatureRequest);
 
         assertEquals(expectedResult, result);
     }

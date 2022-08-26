@@ -4,6 +4,11 @@ import ai.mypulse.hmacauth.utils.HttpUtils;
 import ai.mypulse.hmacauth.utils.QueryParamsUtils;
 import ai.mypulse.hmacauth.utils.StringUtils;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.HmacAlgorithms;
+import org.apache.commons.codec.digest.HmacUtils;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -51,6 +56,13 @@ public abstract class AbstractAuthSigner {
         }
 
         return result.toString();
+    }
+
+    protected String calculateHmac(String secretAccessKey, String stringToSign) throws NoSuchAlgorithmException {
+        final HmacUtils hmacHelper = new HmacUtils(HmacAlgorithms.HMAC_SHA_256, secretAccessKey);
+
+        final byte[] raw = hmacHelper.hmac(stringToSign);
+        return hex(raw);
     }
 
     protected String getContentStreamHash(InputStream stream) throws IOException {
