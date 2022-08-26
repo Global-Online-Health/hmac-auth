@@ -7,10 +7,20 @@ import java.io.IOException;
 
 public class AuthSigner extends AbstractAuthSigner {
     public static final String SEPARATOR = "\n";
+    public static final String HMAC_ALGORITHM = "HMAC-SHA256";
+
+    protected String createStringToSign(HttpServletRequest request) throws IOException {
+        String hashCanonicalRequest = hashCanonicalRequest(request);
+        return HMAC_ALGORITHM +
+                SEPARATOR +
+                request.getHeader("x-signature-timestamp") +
+                SEPARATOR +
+                hashCanonicalRequest;
+    }
 
     protected String hashCanonicalRequest(HttpServletRequest request) throws IOException {
         String canonicalRequest = createCanonicalRequest(request);
-        return  getContentStringHash(canonicalRequest);
+        return getContentStringHash(canonicalRequest);
     }
 
     protected String createCanonicalRequest(HttpServletRequest request) throws IOException {

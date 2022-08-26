@@ -6,6 +6,9 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
@@ -130,6 +133,46 @@ public class AuthSignerTest {
         request.setContent(requestBody);
 
         var result = auth.hashCanonicalRequest(request);
+
+        assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void createStringToSignReturnsExpectedString() throws IOException {
+        var auth = new AuthSigner();
+        var signatureTimestamp = Instant.now(Clock.fixed(Instant.parse("2022-01-01T14:00:00Z"),
+                ZoneOffset.UTC)).getEpochSecond();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setServerName("example");
+        request.setRequestURI("example.ai");
+        request.setMethod("GET");
+        request.setPathInfo("/foo");
+        request.addHeader("x-signature-timestamp", signatureTimestamp);
+        var expectedResult = AuthSigner.HMAC_ALGORITHM +
+                "\n" + signatureTimestamp +
+                "\ne1688f15ba88ed1fdf3279a044ad4d99a301fd14257f0b4dd2b986de4f2edfc8";
+
+        var result = auth.createStringToSign(request);
+
+        assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void createStringToSignHandlesUppercaseSignatureTimestampHeader() throws IOException {
+        var auth = new AuthSigner();
+        var signatureTimestamp = Instant.now(Clock.fixed(Instant.parse("2022-01-01T14:00:00Z"),
+                ZoneOffset.UTC)).getEpochSecond();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setServerName("example");
+        request.setRequestURI("example.ai");
+        request.setMethod("GET");
+        request.setPathInfo("/foo");
+        request.addHeader("X-SIGNATURE-TIMESTAMP", signatureTimestamp);
+        var expectedResult = AuthSigner.HMAC_ALGORITHM +
+                "\n" + signatureTimestamp +
+                "\ne1688f15ba88ed1fdf3279a044ad4d99a301fd14257f0b4dd2b986de4f2edfc8";
+
+        var result = auth.createStringToSign(request);
 
         assertEquals(expectedResult, result);
     }
