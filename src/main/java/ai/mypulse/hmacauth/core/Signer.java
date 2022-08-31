@@ -6,4 +6,6 @@ public interface Signer {
     String getSecretAccessKey();
 
     HttpServletRequest getHttpRequest();
+
+    HttpRequest getHttpRequest2();
 }

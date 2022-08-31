@@ -48,19 +48,17 @@ public class HmacAuthenticationSignerTest {
         var accessKey = "test-access-key";
         var signatureRequest = new AuthSignerRequest();
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setServerName("example");
-        request.setRequestURI("example.ai");
+        HttpRequest request = new HttpRequest();
         request.setMethod(method);
-        request.setPathInfo("/foo");
-        request.addHeader("X-MP-TIMESTAMP", signatureTimestamp);
-        request.addHeader("X-MP-ACCESS-KEY", accessKey);
+        request.setPath("/foo");
+        request.setTimestamp(signatureTimestamp);
+        request.setAccessKey(accessKey);
 
         if (requestBody != null){
-            request.setContent(requestBody);
+            request.setBody(requestBody);
         }
 
-        signatureRequest.setHttpRequest(request);
+        signatureRequest.setHttpRequest2(request);
         signatureRequest.setSecretAccessKey("test-secret-access-key");
 
         return signatureRequest;

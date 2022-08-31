@@ -11,7 +11,7 @@ import static org.apache.commons.codec.digest.HmacAlgorithms.HMAC_SHA_256;
 public class HmacAuthenticationSigner implements AuthenticationSigner{
 
     public String calculateSignature(Signer request) throws IOException {
-        String stringToSign = new HmacStringToSign().createStringToSign(request.getHttpRequest());
+        String stringToSign = new HmacStringToSign().createStringToSign(request.getHttpRequest2());
         return calculateHmac(request.getSecretAccessKey(), stringToSign);
     }
 
