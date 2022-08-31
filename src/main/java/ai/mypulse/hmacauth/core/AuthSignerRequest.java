@@ -3,7 +3,7 @@ package ai.mypulse.hmacauth.core;
 public class AuthSignerRequest implements Signer {
 
     private String secretAccessKey;
-    private HttpRequest httpRequest2;
+    private HttpRequest httpRequest;
 
     @Override
     public String getSecretAccessKey() {
@@ -15,11 +15,11 @@ public class AuthSignerRequest implements Signer {
     }
 
     @Override
-    public HttpRequest getHttpRequest2() {
-        return httpRequest2;
+    public HttpRequest getHttpRequest() {
+        return httpRequest;
     }
 
-    public void setHttpRequest2(HttpRequest httpRequest2) {
-        this.httpRequest2 = httpRequest2;
+    public void setHttpRequest(HttpRequest httpRequest) {
+        this.httpRequest = httpRequest;
     }
 }

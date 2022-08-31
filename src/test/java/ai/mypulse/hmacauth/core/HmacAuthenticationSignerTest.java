@@ -56,7 +56,7 @@ public class HmacAuthenticationSignerTest {
             request.setBody(requestBody);
         }
 
-        signatureRequest.setHttpRequest2(request);
+        signatureRequest.setHttpRequest(request);
         signatureRequest.setSecretAccessKey("test-secret-access-key");
 
         return signatureRequest;
