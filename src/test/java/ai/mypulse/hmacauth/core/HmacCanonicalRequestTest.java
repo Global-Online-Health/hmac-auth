@@ -2,7 +2,6 @@ package ai.mypulse.hmacauth.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -16,11 +15,10 @@ public class HmacCanonicalRequestTest {
     public void createCanonicalRequestReturnsCanonicalRequest() throws IOException {
         var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "GET\n/foo\n\n" + hashFromNoContent;
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setServerName("example");
-        request.setRequestURI("example.ai");
+        var request = new HttpRequest();
         request.setMethod("GET");
-        request.setPathInfo("/foo");
+        request.setPath("/foo");
+        request.setBody(new byte[0]);
 
         var result = canonicalRequest.createCanonicalRequest(request);
 
@@ -30,12 +28,11 @@ public class HmacCanonicalRequestTest {
     @Test
     public void createCanonicalRequestWithQueryParamsReturnsCanonicalRequest() throws IOException {
         var canonicalRequest = new HmacCanonicalRequest();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setServerName("example");
-        request.setRequestURI("example.ai");
+        var request = new HttpRequest();
         request.setMethod("GET");
-        request.setPathInfo("/foo");
+        request.setPath("/foo");
         request.setQueryString("paramC=valueC&paramB=valueB&paramA=valueA");
+        request.setBody(new byte[0]);
         var expectedResult = "GET\n/foo\nparamA=valueA&paramB=valueB&paramC=valueC\n" + hashFromNoContent;
 
         var result = canonicalRequest.createCanonicalRequest(request);
@@ -46,12 +43,11 @@ public class HmacCanonicalRequestTest {
     @Test
     public void createCanonicalRequestWithMultipleQueryParamsValuesReturnsCanonicalRequest() throws IOException {
         var canonicalRequest = new HmacCanonicalRequest();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setServerName("example");
-        request.setRequestURI("example.ai");
+        var request = new HttpRequest();
         request.setMethod("GET");
-        request.setPathInfo("/foo");
+        request.setPath("/foo");
         request.setQueryString("paramB=valueB&paramA=[\"valueAB\", \"valueAA\"]");
+        request.setBody(new byte[0]);
         var expectedResult = "GET\n/foo\nparamA=valueAA&paramA=valueAB&paramB=valueB\n" + hashFromNoContent;
 
         var result = canonicalRequest.createCanonicalRequest(request);
@@ -67,12 +63,10 @@ public class HmacCanonicalRequestTest {
             put("fieldB", "valueB");
         }};
         byte[] requestBody = new ObjectMapper().writeValueAsBytes(values);
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setServerName("example");
-        request.setRequestURI("example.ai");
+        var request = new HttpRequest();
         request.setMethod("POST");
-        request.setPathInfo("/foo");
-        request.setContent(requestBody);
+        request.setPath("/foo");
+        request.setBody(requestBody);
         var expectedResult = "POST\n/foo\n\nf4bdef762a687446d6e44db2c986ce8ab52ee26eafcd86ea70035754b9b60d19";
 
         var result = canonicalRequest.createCanonicalRequest(request);
@@ -84,11 +78,10 @@ public class HmacCanonicalRequestTest {
     public void hashCanonicalRequestReturnsHashedContent() throws IOException {
         var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "e1688f15ba88ed1fdf3279a044ad4d99a301fd14257f0b4dd2b986de4f2edfc8";
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setServerName("example");
-        request.setRequestURI("example.ai");
+        var request = new HttpRequest();
         request.setMethod("GET");
-        request.setPathInfo("/foo");
+        request.setPath("/foo");
+        request.setBody(new byte[0]);
 
         var result = canonicalRequest.hashCanonicalRequest(request);
 
@@ -99,12 +92,11 @@ public class HmacCanonicalRequestTest {
     public void hashCanonicalRequestWithQueryParametersReturnsHashedContent() throws IOException {
         var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "dae7e91d46b1a622ae941b98b736f8a312c03099ec39a5f59e53d55f1f302194";
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setServerName("example");
-        request.setRequestURI("example.ai");
+        var request = new HttpRequest();
         request.setMethod("GET");
-        request.setPathInfo("/foo");
+        request.setPath("/foo");
         request.setQueryString("paramC=valueC&paramB=valueB&paramA=valueA");
+        request.setBody(new byte[0]);
 
         var result = canonicalRequest.hashCanonicalRequest(request);
 
@@ -120,12 +112,10 @@ public class HmacCanonicalRequestTest {
             put("fieldB", "valueB");
         }};
         byte[] requestBody = new ObjectMapper().writeValueAsBytes(values);
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setServerName("example");
-        request.setRequestURI("example.ai");
+        var request = new HttpRequest();
         request.setMethod("POST");
-        request.setPathInfo("/foo");
-        request.setContent(requestBody);
+        request.setPath("/foo");
+        request.setBody(requestBody);
 
         var result = canonicalRequest.hashCanonicalRequest(request);
 

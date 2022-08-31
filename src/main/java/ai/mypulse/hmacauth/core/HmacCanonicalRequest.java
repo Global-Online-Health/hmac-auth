@@ -20,6 +20,11 @@ public class HmacCanonicalRequest implements CanonicalRequest {
         return getContentStringHash(canonicalRequest);
     }
 
+    public String hashCanonicalRequest(HttpRequest request) throws IOException {
+        String canonicalRequest = createCanonicalRequest(request);
+        return getContentStringHash(canonicalRequest);
+    }
+
     private String getContentStringHash(String content) {
         return hex(hashString(content));
     }
@@ -38,6 +43,23 @@ public class HmacCanonicalRequest implements CanonicalRequest {
                 SEPARATOR +
                 getContentStreamHash(inputStream);
     }
+
+    protected String createCanonicalRequest(HttpRequest request) throws IOException {
+        final String path = HttpUtils.appendUri(request.getPath());
+
+        // ensure that the inputStream is retrieved before getting the query parameters
+        var inputStream = request.getBody();
+
+        return request.getMethod() +
+                SEPARATOR +
+                getResourcePathToCanonical(path) +
+                SEPARATOR +
+                getQueryParametersToCanonical(request.getQueryString()) +
+                SEPARATOR +
+                getContentStreamHash(inputStream);
+    }
+
+
 
     protected String getResourcePathToCanonical(String resourcePath) {
         String value;
