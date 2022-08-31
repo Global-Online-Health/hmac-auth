@@ -14,7 +14,7 @@ public class HmacStringToSign implements StringToSign {
                 SEPARATOR +
                 request.getTimestamp() +
                 SEPARATOR +
-                request.getAccessKey() +
+                request.getAccessKeyId() +
                 SEPARATOR +
                 hashCanonicalRequest;
     }

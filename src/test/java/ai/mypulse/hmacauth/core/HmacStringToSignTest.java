@@ -22,7 +22,7 @@ public class HmacStringToSignTest {
         request.setPath("/foo");
         request.setBody(new byte[0]);
         request.setTimestamp(signatureTimestamp);
-        request.setAccessKey(accessKey);
+        request.setAccessKeyId(accessKey);
         var expectedResult = HMAC_ALGORITHM +
                 "\n" + signatureTimestamp +
                 "\n" + accessKey +
@@ -44,7 +44,7 @@ public class HmacStringToSignTest {
         request.setPath("/foo");
         request.setBody(new byte[0]);
         request.setTimestamp(signatureTimestamp);
-        request.setAccessKey(accessKey);
+        request.setAccessKeyId(accessKey);
         var expectedResult = HMAC_ALGORITHM +
                 "\n" + signatureTimestamp +
                 "\n" + accessKey +

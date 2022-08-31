@@ -11,7 +11,7 @@ public class HttpRequest {
     private String path;
     private String queryString;
     private long timestamp;
-    private String accessKey;
+    private String accessKeyId;
     private byte[] body = new byte[0];
 
     public InputStream getBody() {

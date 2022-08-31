@@ -50,7 +50,7 @@ public class HmacAuthenticationSignerTest {
         request.setMethod(method);
         request.setPath("/foo");
         request.setTimestamp(signatureTimestamp);
-        request.setAccessKey(accessKey);
+        request.setAccessKeyId(accessKey);
 
         if (requestBody != null){
             request.setBody(requestBody);
