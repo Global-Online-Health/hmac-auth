@@ -1,7 +1,6 @@
 package ai.mypulse.hmacauth.core;
 
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.io.IOException;
 import java.time.Clock;

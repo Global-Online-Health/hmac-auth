@@ -2,10 +2,8 @@ package ai.mypulse.hmacauth.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;

@@ -1,7 +1,6 @@
 package ai.mypulse.hmacauth.core;
 
 import lombok.Data;
-import lombok.Singular;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

@@ -1,11 +1,8 @@
 package ai.mypulse.hmacauth.core;
 
-import javax.servlet.http.HttpServletRequest;
-
 public class AuthSignerRequest implements Signer {
 
     private String secretAccessKey;
-    private HttpServletRequest httpRequest;
     private HttpRequest httpRequest2;
 
     @Override
@@ -15,15 +12,6 @@ public class AuthSignerRequest implements Signer {
 
     public void setSecretAccessKey(String secretAccessKey) {
         this.secretAccessKey = secretAccessKey;
-    }
-
-    @Override
-    public HttpServletRequest getHttpRequest() {
-        return httpRequest;
-    }
-
-    public void setHttpRequest(HttpServletRequest httpRequest) {
-        this.httpRequest = httpRequest;
     }
 
     @Override

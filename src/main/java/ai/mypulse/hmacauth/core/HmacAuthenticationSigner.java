@@ -3,7 +3,6 @@ package ai.mypulse.hmacauth.core;
 import org.apache.commons.codec.digest.HmacUtils;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 
 import static ai.mypulse.hmacauth.utils.EncodingUtils.hex;
 import static org.apache.commons.codec.digest.HmacAlgorithms.HMAC_SHA_256;

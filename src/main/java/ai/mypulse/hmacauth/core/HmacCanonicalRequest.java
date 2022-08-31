@@ -4,7 +4,6 @@ import ai.mypulse.hmacauth.utils.HttpUtils;
 import ai.mypulse.hmacauth.utils.QueryParamsUtils;
 import ai.mypulse.hmacauth.utils.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -15,11 +14,6 @@ import static ai.mypulse.hmacauth.utils.EncodingUtils.*;
 
 public class HmacCanonicalRequest implements CanonicalRequest {
 
-    public String hashCanonicalRequest(HttpServletRequest request) throws IOException {
-        String canonicalRequest = createCanonicalRequest(request);
-        return getContentStringHash(canonicalRequest);
-    }
-
     public String hashCanonicalRequest(HttpRequest request) throws IOException {
         String canonicalRequest = createCanonicalRequest(request);
         return getContentStringHash(canonicalRequest);
@@ -27,21 +21,6 @@ public class HmacCanonicalRequest implements CanonicalRequest {
 
     private String getContentStringHash(String content) {
         return hex(hashString(content));
-    }
-
-    protected String createCanonicalRequest(HttpServletRequest request) throws IOException {
-        final String path = HttpUtils.appendUri(request.getPathInfo());
-
-        // ensure that the inputStream is retrieved before getting the query parameters
-        var inputStream = request.getInputStream();
-
-        return request.getMethod() +
-                SEPARATOR +
-                getResourcePathToCanonical(path) +
-                SEPARATOR +
-                getQueryParametersToCanonical(request.getQueryString()) +
-                SEPARATOR +
-                getContentStreamHash(inputStream);
     }
 
     protected String createCanonicalRequest(HttpRequest request) throws IOException {
@@ -58,8 +37,6 @@ public class HmacCanonicalRequest implements CanonicalRequest {
                 SEPARATOR +
                 getContentStreamHash(inputStream);
     }
-
-
 
     protected String getResourcePathToCanonical(String resourcePath) {
         String value;
