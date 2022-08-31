@@ -9,6 +9,10 @@ public class HttpRequest {
     private String queryString;
     private byte[] body;
 
+    private long timestamp;
+
+    private String accessKey;
+
     public String getMethod() {
         return method;
     }
@@ -39,5 +43,21 @@ public class HttpRequest {
 
     public void setBody(byte[] body) {
         this.body = body;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public String getAccessKey() {
+        return accessKey;
+    }
+
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
     }
 }

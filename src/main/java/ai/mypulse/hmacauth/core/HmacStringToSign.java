@@ -21,4 +21,16 @@ public class HmacStringToSign implements StringToSign{
                 SEPARATOR +
                 hashCanonicalRequest;
     }
+
+    public String createStringToSign(HttpRequest request) throws IOException {
+        String hashCanonicalRequest = new HmacCanonicalRequest().hashCanonicalRequest(request);
+
+        return HMAC_ALGORITHM +
+                SEPARATOR +
+                request.getTimestamp() +
+                SEPARATOR +
+                request.getAccessKey() +
+                SEPARATOR +
+                hashCanonicalRequest;
+    }
 }

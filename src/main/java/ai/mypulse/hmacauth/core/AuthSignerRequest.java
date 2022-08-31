@@ -6,6 +6,7 @@ public class AuthSignerRequest implements Signer {
 
     private String secretAccessKey;
     private HttpServletRequest httpRequest;
+    private HttpRequest httpRequest2;
 
     @Override
     public String getSecretAccessKey() {
@@ -23,5 +24,14 @@ public class AuthSignerRequest implements Signer {
 
     public void setHttpRequest(HttpServletRequest httpRequest) {
         this.httpRequest = httpRequest;
+    }
+
+    @Override
+    public HttpRequest getHttpRequest2() {
+        return httpRequest2;
+    }
+
+    public void setHttpRequest2(HttpRequest httpRequest2) {
+        this.httpRequest2 = httpRequest2;
     }
 }

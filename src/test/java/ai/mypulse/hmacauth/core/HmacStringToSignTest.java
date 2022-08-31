@@ -18,13 +18,12 @@ public class HmacStringToSignTest {
         var signatureTimestamp = Instant.now(Clock.fixed(Instant.parse("2022-01-01T14:00:00Z"),
                 ZoneOffset.UTC)).getEpochSecond();
         var accessKey = "test-access-key";
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setServerName("example");
-        request.setRequestURI("example.ai");
+        HttpRequest request = new HttpRequest();
         request.setMethod("GET");
-        request.setPathInfo("/foo");
-        request.addHeader("x-mp-timestamp", signatureTimestamp);
-        request.addHeader("X-mp-access-key", accessKey);
+        request.setPath("/foo");
+        request.setBody(new byte[0]);
+        request.setTimestamp(signatureTimestamp);
+        request.setAccessKey(accessKey);
         var expectedResult = HMAC_ALGORITHM +
                 "\n" + signatureTimestamp +
                 "\n" + accessKey +
@@ -41,13 +40,12 @@ public class HmacStringToSignTest {
         var signatureTimestamp = Instant.now(Clock.fixed(Instant.parse("2022-01-01T14:00:00Z"),
                 ZoneOffset.UTC)).getEpochSecond();
         var accessKey = "test-access-key";
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setServerName("example");
-        request.setRequestURI("example.ai");
+        HttpRequest request = new HttpRequest();
         request.setMethod("GET");
-        request.setPathInfo("/foo");
-        request.addHeader("X-MP-TIMESTAMP", signatureTimestamp);
-        request.addHeader("X-MP-ACCESS-KEY", accessKey);
+        request.setPath("/foo");
+        request.setBody(new byte[0]);
+        request.setTimestamp(signatureTimestamp);
+        request.setAccessKey(accessKey);
         var expectedResult = HMAC_ALGORITHM +
                 "\n" + signatureTimestamp +
                 "\n" + accessKey +
