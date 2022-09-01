@@ -20,7 +20,7 @@ import static org.springframework.http.HttpStatus.OK;
 @SpringBootTest
 class IntegrationTest {
 
-    private static final WireMockServer wireMockServer = new WireMockServer();
+    private static final WireMockServer WIRE_MOCK_SERVER = new WireMockServer();
     private static final String ACCESS_KEY_ID = "test-access-key";
     private static final long REQUEST_TIMESTAMP = Instant
             .now(Clock.fixed(Instant.parse("2022-01-01T14:00:00Z"), ZoneOffset.UTC))
@@ -31,20 +31,18 @@ class IntegrationTest {
 
     @BeforeAll
     static void beforeAll() {
-        wireMockServer.start();
+        WIRE_MOCK_SERVER.start();
     }
 
     @BeforeEach
     void setUp() {
-        wireMockServer.resetAll();
+        WIRE_MOCK_SERVER.resetAll();
         configureFor("localhost", 8080);
-        stubFor(get(urlEqualTo("/foo")).willReturn(aResponse()));
-        stubFor(get(urlEqualTo("/foo?" + QUERY_STRING)).willReturn(aResponse()));
-        stubFor(post(urlEqualTo("/foo")).willReturn(aResponse()));
     }
 
     @Test
     void shouldAddAuthorizationHeaderToGetRequest() {
+        stubFor(get(urlEqualTo("/foo")).willReturn(aResponse()));
         var expectedSignature = "947bd0fa6994f6ddf7ccbddeff6968a8f011187b88864f1f8ba4f3fb48a2d9f0";
         var expectedAuthorizationHeader = String.format(AUTHORIZATION_HEADER_TEMPLATE, expectedSignature);
 
@@ -60,6 +58,7 @@ class IntegrationTest {
 
     @Test
     void shouldAddAuthorizationHeaderToPostRequest() throws JsonProcessingException {
+        stubFor(post(urlEqualTo("/foo")).willReturn(aResponse()));
         byte[] requestBody = new ObjectMapper().writeValueAsBytes(new HashMap<String, String>() {{
             put("fieldA", "valueA");
             put("fieldB", "valueB");
@@ -79,6 +78,7 @@ class IntegrationTest {
 
     @Test
     void shouldAddAuthorizationHeaderToGetRequestWithQueryString() {
+        stubFor(get(urlEqualTo("/foo?" + QUERY_STRING)).willReturn(aResponse()));
         var expectedSignature = "10ed21705b857eb52ab73296367e06db3f547308f8760ea498641cc25c425b3e";
         var expectedAuthorizationHeader = String.format(AUTHORIZATION_HEADER_TEMPLATE, expectedSignature);
 
