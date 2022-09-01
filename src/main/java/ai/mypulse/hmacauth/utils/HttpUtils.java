@@ -30,10 +30,8 @@ public class HttpUtils {
 
         try {
             String encoded = URLEncoder.encode(value, DEFAULT_ENCODING);
-
             Matcher matcher = ENCODED_CHARS_PATTERN.matcher(encoded);
             StringBuilder buffer = new StringBuilder(encoded.length());
-
             while (matcher.find()) {
                 String replacement = matcher.group(0);
 
@@ -46,10 +44,8 @@ public class HttpUtils {
                 } else if (path && "%2F".equals(replacement)) {
                     replacement = "/";
                 }
-
                 matcher.appendReplacement(buffer, replacement);
             }
-
             matcher.appendTail(buffer);
             return buffer.toString();
 
@@ -68,7 +64,6 @@ public class HttpUtils {
         } else {
             resultUri += "/";
         }
-
         return resultUri;
     }
 }

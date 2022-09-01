@@ -12,16 +12,13 @@ import java.util.Objects;
 public class EncodingUtils {
     public static byte[] hash(final InputStream inputStream) throws IOException, IllegalArgumentException {
         Objects.requireNonNull(inputStream);
-
         try {
             final byte[] buffer = new byte[Constants.BUFFER_SIZE];
             final MessageDigest digest = MessageDigest.getInstance("SHA-256");
-
             int bytesRead;
             while ((bytesRead = inputStream.read(buffer)) != -1) {
                 digest.update(buffer, 0, bytesRead);
             }
-
             return digest.digest();
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("SHA-256 hashing algorithm unknown.", e);

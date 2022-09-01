@@ -4,7 +4,6 @@ import java.util.Locale;
 
 public class StringUtils {
     private static final Locale LOCALE_ENGLISH = Locale.ENGLISH;
-
     public static boolean isNullOrEmpty(String value) {
         return value == null || value.isEmpty();
     }

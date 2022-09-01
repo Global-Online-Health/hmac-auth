@@ -21,7 +21,6 @@ public class QueryParamsUtils {
             }
             addValueToQueryPair(query_pairs, pair, idx, key);
         }
-
         return query_pairs;
     }
 
@@ -29,7 +28,6 @@ public class QueryParamsUtils {
         String value = idx > 0 && pair.length() > idx + 1 ?
                 URLDecoder.decode(pair.substring(idx + 1), StandardCharsets.UTF_8) :
                 null;
-
             List<String> parsedValue = parseParameterValue(value);
             if (parsedValue.size() > 1) {
                 parsedValue.forEach((val) ->
