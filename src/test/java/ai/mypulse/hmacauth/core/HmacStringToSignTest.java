@@ -17,12 +17,12 @@ public class HmacStringToSignTest {
         var signatureTimestamp = Instant.now(Clock.fixed(Instant.parse("2022-01-01T14:00:00Z"),
                 ZoneOffset.UTC)).getEpochSecond();
         var accessKey = "test-access-key";
-        HttpRequest request = new HttpRequest();
-        request.setMethod("GET");
-        request.setPath("/foo");
-        request.setBody(new byte[0]);
-        request.setTimestamp(signatureTimestamp);
-        request.setAccessKeyId(accessKey);
+        HttpRequest request = HttpRequest.builder()
+                .method("GET")
+                .path("/foo")
+                .timestamp(signatureTimestamp)
+                .accessKeyId(accessKey)
+                .build();
         var expectedResult = HMAC_ALGORITHM +
                 "\n" + signatureTimestamp +
                 "\n" + accessKey +
@@ -39,12 +39,12 @@ public class HmacStringToSignTest {
         var signatureTimestamp = Instant.now(Clock.fixed(Instant.parse("2022-01-01T14:00:00Z"),
                 ZoneOffset.UTC)).getEpochSecond();
         var accessKey = "test-access-key";
-        HttpRequest request = new HttpRequest();
-        request.setMethod("GET");
-        request.setPath("/foo");
-        request.setBody(new byte[0]);
-        request.setTimestamp(signatureTimestamp);
-        request.setAccessKeyId(accessKey);
+        HttpRequest request = HttpRequest.builder()
+                .method("GET")
+                .path("/foo")
+                .timestamp(signatureTimestamp)
+                .accessKeyId(accessKey)
+                .build();
         var expectedResult = HMAC_ALGORITHM +
                 "\n" + signatureTimestamp +
                 "\n" + accessKey +

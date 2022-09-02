@@ -57,17 +57,14 @@ public class HmacAuthenticationSignerTest {
                 ZoneOffset.UTC)).getEpochSecond();
         var accessKey = "test-access-key";
         var signatureRequest = new AuthSignerRequest();
-
-        HttpRequest request = new HttpRequest();
-        request.setMethod(method);
-        request.setPath("/foo");
-        request.setTimestamp(signatureTimestamp);
-        request.setAccessKeyId(accessKey);
-        request.setQueryString(queryString);
-
-        if (requestBody != null){
-            request.setBody(requestBody);
-        }
+        HttpRequest request = HttpRequest.builder()
+                .method(method)
+                .path("/foo")
+                .timestamp(signatureTimestamp)
+                .accessKeyId(accessKey)
+                .queryString(queryString)
+                .body(requestBody)
+                .build();
 
         signatureRequest.setHttpRequest(request);
         signatureRequest.setSecretAccessKey("test-secret-access-key");

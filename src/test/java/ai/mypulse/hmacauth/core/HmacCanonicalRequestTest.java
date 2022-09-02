@@ -15,10 +15,10 @@ public class HmacCanonicalRequestTest {
     public void createCanonicalRequestReturnsCanonicalRequest() throws IOException {
         var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "GET\n/foo\n\n" + hashFromNoContent;
-        var request = new HttpRequest();
-        request.setMethod("GET");
-        request.setPath("/foo");
-        request.setBody(new byte[0]);
+        HttpRequest request = HttpRequest.builder()
+                .method("GET")
+                .path("/foo")
+                .build();
 
         var result = canonicalRequest.createCanonicalRequest(request);
 
@@ -28,11 +28,11 @@ public class HmacCanonicalRequestTest {
     @Test
     public void createCanonicalRequestWithQueryParamsReturnsCanonicalRequest() throws IOException {
         var canonicalRequest = new HmacCanonicalRequest();
-        var request = new HttpRequest();
-        request.setMethod("GET");
-        request.setPath("/foo");
-        request.setQueryString("paramC=valueC&paramB=valueB&paramA=valueA");
-        request.setBody(new byte[0]);
+        HttpRequest request = HttpRequest.builder()
+                .method("GET")
+                .path("/foo")
+                .queryString("paramC=valueC&paramB=valueB&paramA=valueA")
+                .build();
         var expectedResult = "GET\n/foo\nparamA=valueA&paramB=valueB&paramC=valueC\n" + hashFromNoContent;
 
         var result = canonicalRequest.createCanonicalRequest(request);
@@ -43,11 +43,11 @@ public class HmacCanonicalRequestTest {
     @Test
     public void createCanonicalRequestWithMultipleQueryParamsValuesReturnsCanonicalRequest() throws IOException {
         var canonicalRequest = new HmacCanonicalRequest();
-        var request = new HttpRequest();
-        request.setMethod("GET");
-        request.setPath("/foo");
-        request.setQueryString("paramB=valueB&paramA=[\"valueAB\", \"valueAA\"]");
-        request.setBody(new byte[0]);
+        HttpRequest request = HttpRequest.builder()
+                .method("GET")
+                .path("/foo")
+                .queryString("paramB=valueB&paramA=[\"valueAB\", \"valueAA\"]")
+                .build();
         var expectedResult = "GET\n/foo\nparamA=valueAA&paramA=valueAB&paramB=valueB\n" + hashFromNoContent;
 
         var result = canonicalRequest.createCanonicalRequest(request);
@@ -63,10 +63,11 @@ public class HmacCanonicalRequestTest {
             put("fieldB", "valueB");
         }};
         byte[] requestBody = new ObjectMapper().writeValueAsBytes(values);
-        var request = new HttpRequest();
-        request.setMethod("POST");
-        request.setPath("/foo");
-        request.setBody(requestBody);
+        HttpRequest request = HttpRequest.builder()
+                .method("POST")
+                .path("/foo")
+                .body(requestBody)
+                .build();
         var expectedResult = "POST\n/foo\n\nf4bdef762a687446d6e44db2c986ce8ab52ee26eafcd86ea70035754b9b60d19";
 
         var result = canonicalRequest.createCanonicalRequest(request);
@@ -78,10 +79,10 @@ public class HmacCanonicalRequestTest {
     public void hashCanonicalRequestReturnsHashedContent() throws IOException {
         var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "e1688f15ba88ed1fdf3279a044ad4d99a301fd14257f0b4dd2b986de4f2edfc8";
-        var request = new HttpRequest();
-        request.setMethod("GET");
-        request.setPath("/foo");
-        request.setBody(new byte[0]);
+        HttpRequest request = HttpRequest.builder()
+                .method("GET")
+                .path("/foo")
+                .build();
 
         var result = canonicalRequest.hashCanonicalRequest(request);
 
@@ -92,11 +93,11 @@ public class HmacCanonicalRequestTest {
     public void hashCanonicalRequestWithQueryParametersReturnsHashedContent() throws IOException {
         var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "dae7e91d46b1a622ae941b98b736f8a312c03099ec39a5f59e53d55f1f302194";
-        var request = new HttpRequest();
-        request.setMethod("GET");
-        request.setPath("/foo");
-        request.setQueryString("paramC=valueC&paramB=valueB&paramA=valueA");
-        request.setBody(new byte[0]);
+        HttpRequest request = HttpRequest.builder()
+                .method("GET")
+                .path("/foo")
+                .queryString("paramC=valueC&paramB=valueB&paramA=valueA")
+                .build();
 
         var result = canonicalRequest.hashCanonicalRequest(request);
 
@@ -112,10 +113,11 @@ public class HmacCanonicalRequestTest {
             put("fieldB", "valueB");
         }};
         byte[] requestBody = new ObjectMapper().writeValueAsBytes(values);
-        var request = new HttpRequest();
-        request.setMethod("POST");
-        request.setPath("/foo");
-        request.setBody(requestBody);
+        HttpRequest request = HttpRequest.builder()
+                .method("POST")
+                .path("/foo")
+                .body(requestBody)
+                .build();
 
         var result = canonicalRequest.hashCanonicalRequest(request);
 
