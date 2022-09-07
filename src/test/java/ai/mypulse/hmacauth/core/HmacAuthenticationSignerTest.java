@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.Base64;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
@@ -66,8 +67,9 @@ public class HmacAuthenticationSignerTest {
                 .body(requestBody)
                 .build();
 
+        String secretAccessKey = Base64.getEncoder().encodeToString("test-secret-access-key".getBytes());
         signatureRequest.setHttpRequest(request);
-        signatureRequest.setSecretAccessKey("test-secret-access-key");
+        signatureRequest.setSecretAccessKey(secretAccessKey);
 
         return signatureRequest;
     }
