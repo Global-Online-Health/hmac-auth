@@ -10,16 +10,22 @@ import static org.apache.commons.codec.digest.HmacAlgorithms.HMAC_SHA_256;
 
 public class HmacAuthenticationSigner implements AuthenticationSigner{
 
-    public String calculateSignature(Signer request) throws IOException {
-        String stringToSign = new HmacStringToSign().createStringToSign(request.getHttpRequest());
-        return calculateHmac(request.getSecretAccessKey(), stringToSign);
+    public String calculateSignatureAsHexadecimal(Signer request) throws IOException {
+        final byte[] hmac = calculateHmac(request);
+        return hex(hmac);
     }
 
-    private static String calculateHmac(String secretAccessKey, String stringToSign) {
+    public String calculateSignatureAsBase64(Signer request) throws IOException {
+        final byte[] hmac = calculateHmac(request);
+        return Base64.getEncoder().encodeToString(hmac);
+    }
+
+    private static byte[] calculateHmac(Signer request) throws IOException {
+        String stringToSign = new HmacStringToSign().createStringToSign(request.getHttpRequest());
+        String secretAccessKey = request.getSecretAccessKey();
         byte[] secretAccessKeyBase64 = Base64.getDecoder().decode(secretAccessKey);
         final HmacUtils hmacHelper = new HmacUtils(HMAC_SHA_256, secretAccessKeyBase64);
 
-        final byte[] raw = hmacHelper.hmac(stringToSign);
-        return hex(raw);
+        return hmacHelper.hmac(stringToSign);
     }
 }

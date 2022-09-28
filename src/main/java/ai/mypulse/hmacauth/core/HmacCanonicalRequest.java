@@ -35,7 +35,8 @@ public class HmacCanonicalRequest implements CanonicalRequest {
                 SEPARATOR +
                 getQueryParametersToCanonical(request.getQueryString()) +
                 SEPARATOR +
-                getContentStreamHash(inputStream);
+                getContentStreamHash(inputStream) +
+                SEPARATOR;
     }
 
     protected String getResourcePathToCanonical(String resourcePath) {
