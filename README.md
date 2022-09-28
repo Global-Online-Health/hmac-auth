@@ -6,7 +6,7 @@ A Java library for creating HMAC Signature for request authentication
 
 Run tests
 
-`./mnvw test`
+`./mvnw test`
 
 Create jar file
 
