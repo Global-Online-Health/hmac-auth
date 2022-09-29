@@ -11,6 +11,7 @@ import java.util.Base64;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class HmacAuthenticationSignerTest {
 
@@ -92,7 +93,45 @@ public class HmacAuthenticationSignerTest {
         assertEquals(expectedResult, result);
     }
 
-    private AuthSignerRequest createSignatureRequest(String method, byte[] requestBody, String queryString){
+    /*
+    @Test
+    public void generateSignatureFromGivenInputs() throws IOException {
+        var auth = new HmacAuthenticationSigner();
+        var method = ""; //add in the request method, ie: GET, POST etc
+        var path = ""; //add in the request path, ie: events, appointments/{appointmentId}
+        var queryString = ""; //add in the string representation of the query parameters, ie: field=[\"valueA\", \"valueB\"]
+
+        var signatureTimestamp = Instant.now().getEpochSecond();
+
+        var accessKey = ""; //add in the hmac access key id
+        var secretAccessKey = ""; //add in the hmac secret access key
+
+        var signatureRequest = new AuthSignerRequest();
+
+        HttpRequest request = HttpRequest.builder()
+                .method(method)
+                .path(path)
+                .timestamp(signatureTimestamp)
+                .accessKeyId(accessKey)
+                .queryString(queryString)
+                .body(null)
+                .build();
+
+        signatureRequest.setHttpRequest(request);
+        signatureRequest.setSecretAccessKey(secretAccessKey);
+
+        var result = auth.calculateSignatureAsBase64(signatureRequest);
+
+        //print the signature timestamp and the generated signature
+        System.out.print("Signature Timestamp: " + signatureTimestamp);
+        System.out.print("\n");
+        System.out.print("Generated Hmac Signature: " + result);
+
+        assertNotNull(result);
+    }
+*/
+
+    private AuthSignerRequest createSignatureRequest(String method, byte[] requestBody, String queryString) {
         var signatureTimestamp = Instant.now(Clock.fixed(Instant.parse("2022-01-01T14:00:00Z"),
                 ZoneOffset.UTC)).getEpochSecond();
         var accessKey = "test_key";
