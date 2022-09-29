@@ -18,7 +18,7 @@ public class HmacAuthenticationSignerTest {
     public void calculateSignatureAsHexadecimalWhenGetRequestCreatesSignature() throws IOException {
         var auth = new HmacAuthenticationSigner();
         var signatureRequest = createSignatureRequest("GET", null, null);
-        var expectedResult = "c0e6d40fea26e46704865ef16a8d1400b0d888884c9702a89e2d81a008279968";
+        var expectedResult = "7a66c633fd8b137b892598856fe6d55eb1d590162de3a02b9aa6a11f6e7e8835";
 
         var result = auth.calculateSignatureAsHexadecimal(signatureRequest);
 
@@ -35,7 +35,7 @@ public class HmacAuthenticationSignerTest {
         byte[] requestBody = new ObjectMapper().writeValueAsBytes(values);
         var signatureRequest = createSignatureRequest("POST", requestBody, null);
 
-        var expectedResult = "2469d915454c0e0524b3360c0aaf32afb7d224d4171c01c505a7e55828bf5be6";
+        var expectedResult = "5cb1c4dbabee077799dd80a3bd3b38084685395edd540567d0ec7c744d555a5d";
         var result = auth.calculateSignatureAsHexadecimal(signatureRequest);
 
         assertEquals(expectedResult, result);
@@ -47,7 +47,7 @@ public class HmacAuthenticationSignerTest {
         var queryString = "paramC=valueC&paramB=valueB&paramA=valueA";
         var signatureRequest = createSignatureRequest("GET", null, queryString);
 
-        var expectedResult = "dd6d442b47489554a6df3558789fb81e4dd99da2915b1e59f43cd813d06876d5";
+        var expectedResult = "b5717fcf2e9aa39ae3812472c46d2b16d19a641593a01d3538ba78aca3eb4c2d";
         var result = auth.calculateSignatureAsHexadecimal(signatureRequest);
 
         assertEquals(expectedResult, result);
@@ -57,7 +57,7 @@ public class HmacAuthenticationSignerTest {
     public void calculateSignatureAsBase64WhenGetRequestCreatesSignature() throws IOException {
         var auth = new HmacAuthenticationSigner();
         var signatureRequest = createSignatureRequest("GET", null, null);
-        var expectedResult = "wObUD+om5GcEhl7xao0UALDYiIhMlwKoni2BoAgnmWg=";
+        var expectedResult = "embGM/2LE3uJJZiFb+bVXrHVkBYt46ArmqahH25+iDU=";
 
         var result = auth.calculateSignatureAsBase64(signatureRequest);
 
@@ -74,7 +74,7 @@ public class HmacAuthenticationSignerTest {
         byte[] requestBody = new ObjectMapper().writeValueAsBytes(values);
         var signatureRequest = createSignatureRequest("POST", requestBody, null);
 
-        var expectedResult = "JGnZFUVMDgUkszYMCq8yr7fSJNQXHAHFBaflWCi/W+Y=";
+        var expectedResult = "XLHE26vuB3eZ3YCjvTs4CEaFOV7dVAVn0Ox8dE1VWl0=";
         var result = auth.calculateSignatureAsBase64(signatureRequest);
 
         assertEquals(expectedResult, result);
@@ -86,7 +86,7 @@ public class HmacAuthenticationSignerTest {
         var queryString = "paramC=valueC&paramB=valueB&paramA=valueA";
         var signatureRequest = createSignatureRequest("GET", null, queryString);
 
-        var expectedResult = "3W1EK0dIlVSm3zVYeJ+4Hk3ZnaKRWx5Z9DzYE9BodtU=";
+        var expectedResult = "tXF/zy6ao5rjgSRyxG0rFtGaZBWToB01OLp4rKPrTC0=";
         var result = auth.calculateSignatureAsBase64(signatureRequest);
 
         assertEquals(expectedResult, result);

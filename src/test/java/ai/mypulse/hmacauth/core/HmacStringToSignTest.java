@@ -26,7 +26,7 @@ public class HmacStringToSignTest {
         var expectedResult = HMAC_ALGORITHM +
                 "\n" + signatureTimestamp +
                 "\n" + accessKey +
-                "\ne91ef84669163268d05f8415f1f6afe789a361d4fb64b8534a71c35526e4809f";
+                "\ne1688f15ba88ed1fdf3279a044ad4d99a301fd14257f0b4dd2b986de4f2edfc8";
 
         var result = stringToSign.createStringToSign(request);
 
@@ -48,7 +48,7 @@ public class HmacStringToSignTest {
         var expectedResult = HMAC_ALGORITHM +
                 "\n" + signatureTimestamp +
                 "\n" + accessKey +
-                "\ne91ef84669163268d05f8415f1f6afe789a361d4fb64b8534a71c35526e4809f";
+                "\ne1688f15ba88ed1fdf3279a044ad4d99a301fd14257f0b4dd2b986de4f2edfc8";
 
         var result = stringToSign.createStringToSign(request);
 

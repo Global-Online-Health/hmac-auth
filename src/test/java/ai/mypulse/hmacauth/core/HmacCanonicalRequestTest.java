@@ -14,7 +14,7 @@ public class HmacCanonicalRequestTest {
     @Test
     public void createCanonicalRequestReturnsCanonicalRequest() throws IOException {
         var canonicalRequest = new HmacCanonicalRequest();
-        var expectedResult = "GET\n/foo\n\n" + hashFromNoContent + "\n";
+        var expectedResult = "GET\n/foo\n\n" + hashFromNoContent;
         HttpRequest request = HttpRequest.builder()
                 .method("GET")
                 .path("/foo")
@@ -34,8 +34,7 @@ public class HmacCanonicalRequestTest {
                 .queryString("paramC=valueC&paramB=valueB&paramA=valueA")
                 .build();
         var expectedResult = "GET\n/foo\nparamA=valueA&paramB=valueB&paramC=valueC\n" +
-                hashFromNoContent +
-                "\n";
+                hashFromNoContent;
 
         var result = canonicalRequest.createCanonicalRequest(request);
 
@@ -51,8 +50,7 @@ public class HmacCanonicalRequestTest {
                 .queryString("paramB=valueB&paramA=[\"valueAB\", \"valueAA\"]")
                 .build();
         var expectedResult = "GET\n/foo\nparamA=valueAA&paramA=valueAB&paramB=valueB\n" +
-                hashFromNoContent +
-                "\n";
+                hashFromNoContent;
 
         var result = canonicalRequest.createCanonicalRequest(request);
 
@@ -72,7 +70,7 @@ public class HmacCanonicalRequestTest {
                 .path("/foo")
                 .body(requestBody)
                 .build();
-        var expectedResult = "POST\n/foo\n\nf4bdef762a687446d6e44db2c986ce8ab52ee26eafcd86ea70035754b9b60d19\n";
+        var expectedResult = "POST\n/foo\n\nf4bdef762a687446d6e44db2c986ce8ab52ee26eafcd86ea70035754b9b60d19";
 
         var result = canonicalRequest.createCanonicalRequest(request);
 
@@ -82,7 +80,7 @@ public class HmacCanonicalRequestTest {
     @Test
     public void hashCanonicalRequestReturnsHashedContent() throws IOException {
         var canonicalRequest = new HmacCanonicalRequest();
-        var expectedResult = "e91ef84669163268d05f8415f1f6afe789a361d4fb64b8534a71c35526e4809f";
+        var expectedResult = "e1688f15ba88ed1fdf3279a044ad4d99a301fd14257f0b4dd2b986de4f2edfc8";
         HttpRequest request = HttpRequest.builder()
                 .method("GET")
                 .path("/foo")
@@ -96,7 +94,7 @@ public class HmacCanonicalRequestTest {
     @Test
     public void hashCanonicalRequestWithQueryParametersReturnsHashedContent() throws IOException {
         var canonicalRequest = new HmacCanonicalRequest();
-        var expectedResult = "0b59572e757c7aa9de5a053cca62bae271b14a36eeb160739daed89718fd7194";
+        var expectedResult = "dae7e91d46b1a622ae941b98b736f8a312c03099ec39a5f59e53d55f1f302194";
         HttpRequest request = HttpRequest.builder()
                 .method("GET")
                 .path("/foo")
@@ -111,7 +109,7 @@ public class HmacCanonicalRequestTest {
     @Test
     public void hashCanonicalRequestWithPayloadReturnsHashedContent() throws IOException {
         var canonicalRequest = new HmacCanonicalRequest();
-        var expectedResult = "82b8bab83f359a0480b3aeb0fec33cde636c2a5df97a624c6fb6e61115ebf341";
+        var expectedResult = "31867acd1a6abe32891473dcc0069c92da04d7af4db8479d9426cd52629dfa0a";
         var values = new HashMap<String, String>() {{
             put("fieldA", "valueA");
             put("fieldB", "valueB");
