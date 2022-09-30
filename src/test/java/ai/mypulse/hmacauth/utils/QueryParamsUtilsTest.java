@@ -10,14 +10,14 @@ import static org.junit.Assert.*;
 
 public class QueryParamsUtilsTest {
     @Test
-    public void convertQueryStringToMapWhenNoQueryDoesNothing() {
+    public void shouldDoNothingForNoQueryParameters() {
         var result = QueryParamsUtils.convertQueryStringToMap(null);
 
         assertNull(result);
     }
 
     @Test
-    public void convertQueryStringToMapWhenMissingParameterValueSetsEmpty() {
+    public void shouldSetValueAsEmptyForQueryParametersWithMissingValue() {
         var queryString = "paramA=";
         Map<String, List<String>> expectedResult = new HashMap<>();
         expectedResult.put("paramA", List.of(""));
@@ -29,7 +29,7 @@ public class QueryParamsUtilsTest {
     }
 
     @Test
-    public void convertQueryStringToMapWhenMultipleParameterValuesIsSuccessful() {
+    public void shouldCreateMapWithListOfValuesForQueryStringWithMultipleParameters() {
         var queryString = "paramA=[\"valueAA\", \"valueAB\"]";
         Map<String, List<String>> expectedResult = new HashMap<>();
         expectedResult.put("paramA", List.of("valueAA", "valueAB"));
@@ -41,7 +41,7 @@ public class QueryParamsUtilsTest {
     }
 
     @Test
-    public void convertQueryStringToMapWhenEncodedParameterValuesIsSuccessful() {
+    public void shouldCreateMapWithParameterValuesForQueryStringsWithEncodedParameterValues() {
         var queryString = "paramA=%5B%22valueAA%22%2C%20%22valueAB%22%5D";
         Map<String, List<String>> expectedResult = new HashMap<>();
         expectedResult.put("paramA", List.of("valueAA", "valueAB"));
@@ -53,7 +53,7 @@ public class QueryParamsUtilsTest {
     }
 
     @Test
-    public void convertQueryStringToMapWhenDifferentParametersIsSuccessful() {
+    public void shouldCreateMapWithParameterValuesForQueryStringWithMultiKeyValuePairs() {
         var queryString = "paramB=valueB&paramA=valueA";
         Map<String, List<String>> expectedResult = new HashMap<>();
         expectedResult.put("paramA", List.of("valueA"));

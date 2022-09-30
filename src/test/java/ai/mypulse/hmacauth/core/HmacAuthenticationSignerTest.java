@@ -16,7 +16,7 @@ import static org.junit.Assert.assertNotNull;
 public class HmacAuthenticationSignerTest {
 
     @Test
-    public void calculateSignatureAsHexadecimalWhenGetRequestCreatesSignature() throws IOException {
+    public void shouldCreateSignatureAsHexadecimalForAGetRequest() throws IOException {
         var auth = new HmacAuthenticationSigner();
         var signatureRequest = createSignatureRequest("GET", null, null);
         var expectedResult = "7a66c633fd8b137b892598856fe6d55eb1d590162de3a02b9aa6a11f6e7e8835";
@@ -27,7 +27,7 @@ public class HmacAuthenticationSignerTest {
     }
 
     @Test
-    public void calculateSignatureAsHexadecimalWhenPostRequestCreatesSignature() throws IOException {
+    public void shouldCreateSignatureAsHexadecimalForPostRequest() throws IOException {
         var auth = new HmacAuthenticationSigner();
         var values = new HashMap<String, String>() {{
             put("fieldA", "valueA");
@@ -35,27 +35,27 @@ public class HmacAuthenticationSignerTest {
         }};
         byte[] requestBody = new ObjectMapper().writeValueAsBytes(values);
         var signatureRequest = createSignatureRequest("POST", requestBody, null);
-
         var expectedResult = "5cb1c4dbabee077799dd80a3bd3b38084685395edd540567d0ec7c744d555a5d";
+
         var result = auth.calculateSignatureAsHexadecimal(signatureRequest);
 
         assertEquals(expectedResult, result);
     }
 
     @Test
-    public void calculateSignatureAsHexadecimalWhenGetWithQueryStringRequestCreatesSignature() throws IOException {
+    public void shouldCreateSignatureAsHexadecimalForGetRequestWithQueryStrings() throws IOException {
         var auth = new HmacAuthenticationSigner();
         var queryString = "paramC=valueC&paramB=valueB&paramA=valueA";
         var signatureRequest = createSignatureRequest("GET", null, queryString);
-
         var expectedResult = "b5717fcf2e9aa39ae3812472c46d2b16d19a641593a01d3538ba78aca3eb4c2d";
+
         var result = auth.calculateSignatureAsHexadecimal(signatureRequest);
 
         assertEquals(expectedResult, result);
     }
 
     @Test
-    public void calculateSignatureAsBase64WhenGetRequestCreatesSignature() throws IOException {
+    public void shouldCreateSignatureAsBase64ForGetRequest() throws IOException {
         var auth = new HmacAuthenticationSigner();
         var signatureRequest = createSignatureRequest("GET", null, null);
         var expectedResult = "embGM/2LE3uJJZiFb+bVXrHVkBYt46ArmqahH25+iDU=";
@@ -66,7 +66,7 @@ public class HmacAuthenticationSignerTest {
     }
 
     @Test
-    public void calculateSignatureAsBase64WhenPostRequestCreatesSignature() throws IOException {
+    public void shouldCreateSignatureAsBase64ForPostRequest() throws IOException {
         var auth = new HmacAuthenticationSigner();
         var values = new HashMap<String, String>() {{
             put("fieldA", "valueA");
@@ -74,20 +74,20 @@ public class HmacAuthenticationSignerTest {
         }};
         byte[] requestBody = new ObjectMapper().writeValueAsBytes(values);
         var signatureRequest = createSignatureRequest("POST", requestBody, null);
-
         var expectedResult = "XLHE26vuB3eZ3YCjvTs4CEaFOV7dVAVn0Ox8dE1VWl0=";
+
         var result = auth.calculateSignatureAsBase64(signatureRequest);
 
         assertEquals(expectedResult, result);
     }
 
     @Test
-    public void calculateSignatureAsBase64WhenGetWithQueryStringRequestCreatesSignature() throws IOException {
+    public void shouldCreateSignatureAsBase64ForGetRequestWithQueryStrings() throws IOException {
         var auth = new HmacAuthenticationSigner();
         var queryString = "paramC=valueC&paramB=valueB&paramA=valueA";
         var signatureRequest = createSignatureRequest("GET", null, queryString);
-
         var expectedResult = "tXF/zy6ao5rjgSRyxG0rFtGaZBWToB01OLp4rKPrTC0=";
+
         var result = auth.calculateSignatureAsBase64(signatureRequest);
 
         assertEquals(expectedResult, result);

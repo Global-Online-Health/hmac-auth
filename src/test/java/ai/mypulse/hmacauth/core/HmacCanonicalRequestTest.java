@@ -12,7 +12,7 @@ public class HmacCanonicalRequestTest {
     private static final String hashFromNoContent = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
 
     @Test
-    public void createCanonicalRequestReturnsCanonicalRequest() throws IOException {
+    public void shouldCreateCanonicalRequestForGetRequest() throws IOException {
         var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "GET\n/foo\n\n" + hashFromNoContent;
         HttpRequest request = HttpRequest.builder()
@@ -26,7 +26,7 @@ public class HmacCanonicalRequestTest {
     }
 
     @Test
-    public void createCanonicalRequestWithQueryParamsReturnsCanonicalRequest() throws IOException {
+    public void shouldCreateCanonicalRequestForGetRequestWithQueryParams() throws IOException {
         var canonicalRequest = new HmacCanonicalRequest();
         HttpRequest request = HttpRequest.builder()
                 .method("GET")
@@ -42,7 +42,7 @@ public class HmacCanonicalRequestTest {
     }
 
     @Test
-    public void createCanonicalRequestWithMultipleQueryParamsValuesReturnsCanonicalRequest() throws IOException {
+    public void shouldCreateCanonicalRequestForGetRequestWithMultipleQueryParamsValues() throws IOException {
         var canonicalRequest = new HmacCanonicalRequest();
         HttpRequest request = HttpRequest.builder()
                 .method("GET")
@@ -58,7 +58,7 @@ public class HmacCanonicalRequestTest {
     }
 
     @Test
-    public void createCanonicalRequestWithRequestBodyReturnsCanonicalRequest() throws IOException {
+    public void shouldCreateCanonicalRequestForPostRequest() throws IOException {
         var canonicalRequest = new HmacCanonicalRequest();
         var values = new HashMap<String, String>() {{
             put("fieldA", "valueA");
@@ -78,7 +78,7 @@ public class HmacCanonicalRequestTest {
     }
 
     @Test
-    public void hashCanonicalRequestReturnsHashedContent() throws IOException {
+    public void shouldHashCanonicalRequestForGetRequest() throws IOException {
         var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "e1688f15ba88ed1fdf3279a044ad4d99a301fd14257f0b4dd2b986de4f2edfc8";
         HttpRequest request = HttpRequest.builder()
@@ -92,7 +92,7 @@ public class HmacCanonicalRequestTest {
     }
 
     @Test
-    public void hashCanonicalRequestWithQueryParametersReturnsHashedContent() throws IOException {
+    public void shouldHashCanonicalRequestForGetRequestWithQueryParameters() throws IOException {
         var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "dae7e91d46b1a622ae941b98b736f8a312c03099ec39a5f59e53d55f1f302194";
         HttpRequest request = HttpRequest.builder()
@@ -107,7 +107,7 @@ public class HmacCanonicalRequestTest {
     }
 
     @Test
-    public void hashCanonicalRequestWithPayloadReturnsHashedContent() throws IOException {
+    public void shouldHashCanonicalRequestForPostRequest() throws IOException {
         var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "31867acd1a6abe32891473dcc0069c92da04d7af4db8479d9426cd52629dfa0a";
         var values = new HashMap<String, String>() {{
@@ -127,7 +127,7 @@ public class HmacCanonicalRequestTest {
     }
 
     @Test
-    public void canonicalRequestPrependsSlashWhenNoPathGiven() {
+    public void shouldReturnSlashForNoPathGiven() {
         var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "/";
         var requestPath = "";
@@ -138,7 +138,7 @@ public class HmacCanonicalRequestTest {
     }
 
     @Test
-    public void canonicalRequestPrependsSlashWhenPathWithoutSlash() {
+    public void shouldPrependSlashForPathWithoutSlash() {
         var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "/foo";
         var requestPath = "foo";
@@ -149,7 +149,7 @@ public class HmacCanonicalRequestTest {
     }
 
     @Test
-    public void canonicalRequestLeavesUnchangedWhenPathWithSlash() {
+    public void shouldDoNothingForPathWithSlash() {
         var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "/foo";
         var requestPath = "/foo";
@@ -160,7 +160,7 @@ public class HmacCanonicalRequestTest {
     }
 
     @Test
-    public void canonicalRequestLeavesUnchangedWhenPathWithTrailingSlash() {
+    public void shouldDoNothingForPathWithTrailingSlash() {
         var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "/foo/bar/";
         var requestPath = "/foo/bar/";
@@ -171,7 +171,7 @@ public class HmacCanonicalRequestTest {
     }
 
     @Test
-    public void canonicalQueryStringWhenNoParametersDoesNothing() {
+    public void shouldDoNothingForNoQueryParameters() {
         var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "";
 
@@ -181,11 +181,10 @@ public class HmacCanonicalRequestTest {
     }
 
     @Test
-    public void canonicalQueryStringWhenUnorderedSortsSuccessfully() {
+    public void shouldSortParametersForUnorderedQueryParameters() {
         var canonicalRequest = new HmacCanonicalRequest();
         var queryString = "paramB=valueB&param1=value1&paramA=valueA";
         var expectedResult = "param1=value1&paramA=valueA&paramB=valueB";
-
 
         var result = canonicalRequest.getQueryParametersToCanonical(queryString);
 
@@ -193,7 +192,7 @@ public class HmacCanonicalRequestTest {
     }
 
     @Test
-    public void canonicalQueryStringWhenMultipleValuesAddsThemToParameter() {
+    public void shouldCreateKeyValuePairsForMultipleQueryParametersValues() {
         var canonicalRequest = new HmacCanonicalRequest();
         var queryString = "paramA=[\"valueAA\", \"valueAB\"]";
         var expectedResult = "paramA=valueAA&paramA=valueAB";
@@ -204,7 +203,7 @@ public class HmacCanonicalRequestTest {
     }
 
     @Test
-    public void canonicalQueryStringWhenReservedCharactersEncodesSuccessfully() {
+    public void shouldEncodeParametersForQueryParametersWithReservedCharacters() {
         var canonicalRequest = new HmacCanonicalRequest();
         var expectedResult = "paramA=value%24&paramA=value%40";
         var queryString = "paramA=[\"value$\", \"value@\"]";
@@ -215,7 +214,7 @@ public class HmacCanonicalRequestTest {
     }
 
     @Test
-    public void getContentHashWhenEmptyStreamReturnsDefault() throws IOException {
+    public void shouldReturnHashFromNoContentForEmptyStream() throws IOException {
         var canonicalRequest = new HmacCanonicalRequest();
         var inputStream = new ByteArrayInputStream("".getBytes());
 
@@ -225,7 +224,7 @@ public class HmacCanonicalRequestTest {
     }
 
     @Test
-    public void getContentHashWhenStreamGivenReturnsEncodedStream() throws IOException {
+    public void shouldEncodeStreamForGivenStream() throws IOException {
         var canonicalRequest = new HmacCanonicalRequest();
         var inputStream = new ByteArrayInputStream("{\"fieldA\": \"valueA\", \"fieldB\": \"valueB\"}".getBytes());
         var expected = "bdc504f94212e01e375ee51333dfe51ac43a536c8c2f966b9eff0e34474f784a";
