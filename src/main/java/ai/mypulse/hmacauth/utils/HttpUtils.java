@@ -7,6 +7,9 @@ import java.util.regex.Pattern;
 
 import static ai.mypulse.hmacauth.utils.Constants.DEFAULT_ENCODING;
 
+/**
+ * Utilities for HttpRequest components computations.
+ */
 public class HttpUtils {
 
     private static final Pattern ENCODED_CHARS_PATTERN;
@@ -23,6 +26,13 @@ public class HttpUtils {
         ENCODED_CHARS_PATTERN = Pattern.compile(pattern);
     }
 
+    /**
+     * Encodes a given url as per <a href="https://www.rfc-editor.org/rfc/rfc3986">
+     *      https://www.rfc-editor.org/rfc/rfc3986</a>
+     * @param value Input to be encoded.
+     * @param path Boolean that indicates the input is a path therefore the / are not encoded.
+     * @return Encoded value of the given input.
+     */
     public static String urlEncode(final String value, final boolean path) {
         if (value == null) {
             return "";
@@ -54,6 +64,11 @@ public class HttpUtils {
         }
     }
 
+    /**
+     * Ensures that a given path has a forward slash appended
+     * @param path The path (can be null) to be updated.
+     * @return The updated path.
+     */
     public static String appendUri(String path) {
         String resultUri = "";
         if (path != null && path.length() > 0) {

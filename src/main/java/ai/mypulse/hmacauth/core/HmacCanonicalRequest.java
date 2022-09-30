@@ -12,8 +12,13 @@ import java.util.*;
 import static ai.mypulse.hmacauth.utils.Constants.SEPARATOR;
 import static ai.mypulse.hmacauth.utils.EncodingUtils.*;
 
+/**
+ * {@link CanonicalRequest} implementation that generates HMAC canonical requests
+ * using a given HttpRequest.
+ */
 public class HmacCanonicalRequest implements CanonicalRequest {
 
+    @Override
     public String hashCanonicalRequest(HttpRequest request) throws IOException {
         String canonicalRequest = createCanonicalRequest(request);
         return getContentStringHash(canonicalRequest);

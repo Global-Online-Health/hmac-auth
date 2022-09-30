@@ -4,7 +4,16 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+/**
+ * Utilities for query string parameter computations.
+ */
 public class QueryParamsUtils {
+    /**
+     * Converts a given query string into a map of key value pairs,
+     * where the key represents the query field name and the value is a list of one or more query values of that field.
+     * @param query Query string input to be converted.
+     * @return A map of key value pairs of the query parameters.
+     */
     public static Map<String, List<String>> convertQueryStringToMap(String query) {
         if (StringUtils.isNullOrEmpty(query)) {
             return null;
