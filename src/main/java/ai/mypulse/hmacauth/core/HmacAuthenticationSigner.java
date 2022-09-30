@@ -12,7 +12,7 @@ import static org.apache.commons.codec.digest.HmacAlgorithms.HMAC_SHA_256;
  * {@link AuthenticationSigner} implementation that generates HMAC signatures
  * using a given HttpRequest and a SecretAccessKey to sign the generated string from the request.
  */
-public class HmacAuthenticationSigner implements AuthenticationSigner{
+public class HmacAuthenticationSigner implements AuthenticationSigner {
 
     @Override
     public String calculateSignatureAsHexadecimal(Signer request) throws IOException {

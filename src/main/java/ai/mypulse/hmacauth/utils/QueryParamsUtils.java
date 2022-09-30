@@ -11,6 +11,7 @@ public class QueryParamsUtils {
     /**
      * Converts a given query string into a map of key value pairs,
      * where the key represents the query field name and the value is a list of one or more query values of that field.
+     *
      * @param query Query string input to be converted.
      * @return A map of key value pairs of the query parameters.
      */
@@ -18,39 +19,45 @@ public class QueryParamsUtils {
         if (StringUtils.isNullOrEmpty(query)) {
             return null;
         }
-        final Map<String, List<String>> query_pairs = new LinkedHashMap<>();
+
+        final Map<String, List<String>> queryPairs = new LinkedHashMap<>();
         final String[] pairs = query.split("&");
+
         for (String pair : pairs) {
             final int idx = pair.indexOf("=");
             final String key = idx > 0 ?
                     URLDecoder.decode(pair.substring(0, idx), StandardCharsets.UTF_8) :
                     pair;
-            if (!query_pairs.containsKey(key)) {
-                query_pairs.put(key, new LinkedList<>());
+            if (!queryPairs.containsKey(key)) {
+                queryPairs.put(key, new LinkedList<>());
             }
-            addValueToQueryPair(query_pairs, pair, idx, key);
+            addValueToQueryPair(queryPairs, pair, idx, key);
         }
-        return query_pairs;
+
+        return queryPairs;
     }
 
     private static void addValueToQueryPair(Map<String, List<String>> query_pairs, String pair, int idx, String key) {
         String value = idx > 0 && pair.length() > idx + 1 ?
                 URLDecoder.decode(pair.substring(idx + 1), StandardCharsets.UTF_8) :
                 null;
-            List<String> parsedValue = parseParameterValue(value);
-            if (parsedValue.size() > 1) {
-                parsedValue.forEach((val) ->
-                        query_pairs.get(key).add(val.replaceAll("\"", "").trim()));
-            } else {
-                query_pairs.get(key).add(parsedValue.get(0));
-            }
+        List<String> parsedValue = parseParameterValue(value);
+
+        if (parsedValue.size() > 1) {
+            parsedValue.forEach((val) ->
+                    query_pairs.get(key).add(val.replaceAll("\"", "").trim()));
+        } else {
+            query_pairs.get(key).add(parsedValue.get(0));
+        }
     }
 
     private static List<String> parseParameterValue(String value) {
-        if (value != null){
+        if (value != null) {
             String listValues = value.replaceAll("[\\[\\]]", "");
+
             return new ArrayList<>(Arrays.asList(listValues.split(",")));
         }
+
         return new ArrayList<>(List.of(""));
     }
 }

@@ -45,9 +45,7 @@ public class HmacCanonicalRequest implements CanonicalRequest {
 
     protected String getResourcePathToCanonical(String resourcePath) {
         String value;
-
         value = HttpUtils.urlEncode(resourcePath, true);
-
         URI normalize = URI.create(value).normalize();
         value = normalize.getRawPath();
 
@@ -57,6 +55,7 @@ public class HmacCanonicalRequest implements CanonicalRequest {
         if (!value.startsWith("/")) {
             value = "/" + value;
         }
+
         return value;
     }
 
@@ -69,21 +68,25 @@ public class HmacCanonicalRequest implements CanonicalRequest {
             return "";
         }
         var parameters = QueryParamsUtils.convertQueryStringToMap(query);
-        final SortedMap<String, List<String>> sorted = getSortedParameters(parameters);
-
-        final StringBuilder result = new StringBuilder();
-        for (Map.Entry<String, List<String>> entry : sorted.entrySet()) {
-            for (String value : entry.getValue()) {
-                if (result.length() > 0) {
-                    result.append("&");
+        final SortedMap<String, List<String>> sorted;
+        if (parameters != null) {
+            sorted = getSortedParameters(parameters);
+            final StringBuilder result = new StringBuilder();
+            for (Map.Entry<String, List<String>> entry : sorted.entrySet()) {
+                for (String value : entry.getValue()) {
+                    if (result.length() > 0) {
+                        result.append("&");
+                    }
+                    result.append(entry.getKey())
+                            .append("=")
+                            .append(value);
                 }
-                result.append(entry.getKey())
-                        .append("=")
-                        .append(value);
             }
+
+            return result.toString();
         }
 
-        return result.toString();
+        return "";
     }
 
     private SortedMap<String, List<String>> getSortedParameters(Map<String, List<String>> parameters) {
@@ -101,6 +104,7 @@ public class HmacCanonicalRequest implements CanonicalRequest {
             sorted.put(encodedParamName, encodedValues);
 
         });
+
         return sorted;
     }
 }

@@ -10,6 +10,7 @@ public class StringUtils {
 
     /**
      * Asserts if a given string is null or empty.
+     *
      * @param value Input to be verified.
      * @return A boolean representing the assertion result.
      */
@@ -20,13 +21,15 @@ public class StringUtils {
     /**
      * Transforms a given string characters to uppercase using the English locale,
      * or returns the initial value if given string is null or empty.
-      * @param str Input to be transformed.
+     *
+     * @param str Input to be transformed.
      * @return The input converted to uppercase.
      */
     public static String upperCase(String str) {
         if (isNullOrEmpty(str)) {
             return str;
         }
+
         return str.toUpperCase(LOCALE_ENGLISH);
     }
 }

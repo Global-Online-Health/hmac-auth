@@ -9,6 +9,7 @@ public interface StringToSign {
     /**
      * Generates a string from combining the hashing algorithm used with request elements
      * from a given {@link HttpRequest}.
+     *
      * @param request The {@link HttpRequest}.
      * @return A string value of the generated string to sign.
      * @throws IOException

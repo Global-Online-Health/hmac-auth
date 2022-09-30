@@ -9,8 +9,9 @@ public interface CanonicalRequest {
     /**
      * Combines elements from {@link HttpRequest} such as verb, path, query parameters and payload,
      * hashes the response and returns the hexadecimal representation of it.
+     *
      * @param request The {@link HttpRequest} that contains the required elements to generate the canonical request.
-     * @return A dexadecimal value of the generated canonical request.
+     * @return A hexadecimal value of the generated canonical request.
      * @throws IOException
      */
     String hashCanonicalRequest(HttpRequest request) throws IOException;

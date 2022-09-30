@@ -10,10 +10,10 @@ import static ai.mypulse.hmacauth.utils.Constants.SEPARATOR;
  * signature of a given HttpRequest.
  */
 public class HmacStringToSign implements StringToSign {
-
     @Override
     public String createStringToSign(HttpRequest request) throws IOException {
         String hashCanonicalRequest = new HmacCanonicalRequest().hashCanonicalRequest(request);
+
         return HMAC_ALGORITHM +
                 SEPARATOR +
                 request.getTimestamp() +

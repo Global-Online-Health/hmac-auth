@@ -22,6 +22,7 @@ public class HttpRequest {
 
     /**
      * Returns the input stream of bytes for the request payload.
+     *
      * @return An InputStream.
      */
     public InputStream getBody() {
